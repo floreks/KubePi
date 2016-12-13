@@ -4,3 +4,9 @@
 [submodule "src/github.com/floreks/kubepi-server"]
 	path = src/github.com/floreks/kubepi-server
 	url = https://github.com/floreks/kubepi-server
+[submodule "src/github.com/floreks/kubepi-client"]
+	path = src/github.com/floreks/kubepi-client
+	url = https://github.com/floreks/kubepi-client
+[submodule "src/github.com/floreks/dht-client"]
+	path = src/github.com/floreks/dht-client
+	url = https://github.com/floreks/dht-client
