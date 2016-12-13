@@ -1,0 +1,3 @@
+[submodule "src/github.com/floreks/dht-server"]
+	path = src/github.com/floreks/dht-server
+	url = https://github.com/floreks/dht-server
