@@ -1,0 +1,71 @@
+\documentclass[12pt]{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+% \usepackage{wrapfig}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{txfonts}
+% \usepackage{placeins}
+\usepackage{listings}
+\usepackage{pdfpages}
+\usepackage{color}
+% \usepackage{framed}
+% \usepackage{filecontents}
+\usepackage{caption}
+
+\usepackage[polish]{babel}
+
+\renewcommand{\chaptername}{Rozdział}
+\renewcommand{\contentsname}{Spis treści}
+\renewcommand{\figurename}{Rys.}
+\renewcommand{\tablename}{Tab.}
+\renewcommand{\listfigurename}{Spis rysunków}
+\renewcommand{\listtablename}{Spis tabel}
+\renewcommand{\bibname}{Bibliografia}
+
+\pagestyle{headings}
+
+\setlength{\textwidth}{14cm}
+\setlength{\textheight}{20cm}
+
+\begin{document}
+
+\tableofcontents    % generuje spis treści ze stronami !!!
+
+\chapter{Wstęp}\label{chap:wstep}
+
+\section{Problematyka i zakres pracy}
+\section{Metoda badawcza}
+\section{Przegląd literatury w dziedzinie}
+\section{Układ pracy}
+
+\chapter{KubePi}\label{chap:kubepi}
+\chaptermark{KubePi}
+
+\section{Podstawowe definicje}
+\section{Istniejące aplikacje}
+\section{Wymagania aplikacji}
+\section{Wady i zalety istniejących rozwiązań}
+
+\chapter{Projekt KubePi} \label{rozdz.czesc.prakt}
+\section{Analiza wymagań}
+\section{Użyte technologie}
+\section{Projekt}
+\section{Opis użytkowania}
+\section{Przykład użycia}
+\section{Możliwości rozszerzania aplikacji}
+\chapter{Podsumowanie}
+\section{Dyskusja wyników}
+
+\addcontentsline{toc}{chapter}{Bibliografia}
+\begin{thebibliography}{99}
+	\bibitem{go} {Some books}
+\end{thebibliography}
+
+\addcontentsline{toc}{chapter}{Spis rysunków}
+\listoffigures
+
+\addcontentsline{toc}{chapter}{Spis tabel}
+\listoftables
+
+\end{document}
