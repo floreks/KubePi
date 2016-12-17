@@ -32,6 +32,8 @@ items:
       app: kubernetes-dashboard-head
     template:
       metadata:
+        annotations:
+          scheduler.alpha.kubernetes.io/tolerations: '[{"key":"dedicated", "value":"kube-master"}]'
         labels:
           app: kubernetes-dashboard-head
       spec:

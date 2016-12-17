@@ -7,7 +7,9 @@ After=kube-apiserver.service
 [Service]
 ExecStartPre=-/bin/mkdir -p /opt/kubernetes/bin
 ExecStart=/usr/bin/kube-controller-manager \
-   --kubeconfig=/srv/kubernetes/kubelet.cfg
+  --kubeconfig=/srv/kubernetes/insecure.cfg \
+  --service-account-private-key-file=/home/pirate/kubernetes/apiserver.key \
+  --root-ca-file=/home/pirate/kubernetes/ca.crt
 Restart=always
 RestartSec=10
 

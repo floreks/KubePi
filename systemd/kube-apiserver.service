@@ -11,9 +11,12 @@ ExecStart=/usr/bin/kube-apiserver \
   --service-cluster-ip-range=10.0.0.1/24 \
   --bind-address=0.0.0.0 \
   --insecure-bind-address=0.0.0.0 \
+  --admission-control=NamespaceLifecycle,LimitRanger,ResourceQuota,ServiceAccount \
+  --service-account-key-file=/home/pirate/kubernetes/apiserver.key \
+  --client-ca-file=/home/pirate/kubernetes/ca.crt \
+  --tls-cert-file=/home/pirate/kubernetes/apiserver.crt \
+  --tls-private-key-file=/home/pirate/kubernetes/apiserver.key \
   --allow-privileged=true
-
-
 Restart=always
 RestartSec=10
 
