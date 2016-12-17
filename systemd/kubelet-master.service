@@ -1,0 +1,19 @@
+[Unit]
+Description=Kubelet
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+Requires=kube-apiserver.service
+After=kube-apiserver.service
+
+[Service]
+ExecStart=/usr/bin/kubelet \
+  --kubeconfig=/srv/kubernetes/insecure.cfg \
+  --require-kubeconfig \
+  --cluster-dns=10.0.0.10 \
+  --cluster-domain=cluster.local \
+  --allow-privileged=true \
+
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

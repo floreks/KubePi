@@ -1,0 +1,14 @@
+[Unit]
+Description=Kubernetes Scheduler
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+Requires=kube-apiserver.service
+After=kube-apiserver.service
+
+[Service]
+ExecStart=/usr/bin/kube-scheduler --kubeconfig=/srv/kubernetes/kubelet.cfg
+
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
