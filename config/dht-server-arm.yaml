@@ -31,6 +31,8 @@ items:
             volumeMounts:
               - mountPath: /sys/class/gpio
                 name:      sys-class-gpio
+              - mountPath: /sys/devices
+                name:      sys-devices
             args:
               # Uncomment this if you want to change port
               # - --port=3001
@@ -38,6 +40,9 @@ items:
           - name:     sys-class-gpio
             hostPath:
               path:   /sys/class/gpio
+          - name:     sys-devices
+            hostPath:
+              path:   /sys/devices
 - kind: Service
   apiVersion: v1
   metadata:
