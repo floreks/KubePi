@@ -9,7 +9,9 @@ ExecStartPre=-/bin/mkdir -p /opt/kubernetes/bin
 ExecStart=/usr/bin/kube-controller-manager \
   --kubeconfig=/srv/kubernetes/insecure.cfg \
   --service-account-private-key-file=/home/pirate/kubernetes/apiserver.key \
-  --root-ca-file=/home/pirate/kubernetes/ca.crt
+  --root-ca-file=/home/pirate/kubernetes/ca.crt \
+  --cluster-cidr=10.244.0.0/16 \
+  --allocate-node-cidrs=true
 Restart=always
 RestartSec=10
 
