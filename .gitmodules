@@ -1,6 +1,3 @@
-[submodule "src/github.com/floreks/dht-server"]
-	path = src/github.com/floreks/dht-server
-	url = git@github.com:floreks/dht-server.git
 [submodule "src/github.com/floreks/kubepi-server"]
 	path = src/github.com/floreks/kubepi-server
 	url = git@github.com:floreks/kubepi-server.git
@@ -10,3 +7,6 @@
 [submodule "src/github.com/floreks/dht-client"]
 	path = src/github.com/floreks/dht-client
 	url = git@github.com:floreks/dht-client.git
+[submodule "src/github.com/floreks/dht-server"]
+	path = src/github.com/floreks/dht-server
+	url = git@github.com:floreks/dht-server.git
