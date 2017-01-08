@@ -1,0 +1,38 @@
+kind: List
+apiVersion: v1
+items:
+- kind: Deployment
+  apiVersion: extensions/v1beta1
+  metadata:
+    labels:
+      app: led-max7219-client
+    name: led-max7219-client
+    namespace: node-1
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: led-max7219-client
+    template:
+      metadata:
+        labels:
+          app: led-max7219-client
+      spec:
+        nodeSelector:
+          target: node-1
+        containers:
+          - name: led-max7219-client
+            securityContext:
+              privileged: true
+            image: floreks/led-max7219-client
+            imagePullPolicy: Always
+            volumeMounts:
+              - mountPath: /dev
+                name:      devices
+            args:
+              # Uncomment this if you want to change polling server
+              - --poll-server=http://dht-server.default.svc.cluster.local:3000/ds18b20
+        volumes:
+          - name:     devices
+            hostPath:
+              path:   /dev

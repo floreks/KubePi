@@ -10,3 +10,6 @@
 [submodule "src/github.com/floreks/dht-server"]
 	path = src/github.com/floreks/dht-server
 	url = git@github.com:floreks/dht-server.git
+[submodule "src/github.com/floreks/led-max7219-client"]
+	path = src/github.com/floreks/led-max7219-client
+	url = git@github.com:floreks/led-max7219-client.git
