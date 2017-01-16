@@ -13,3 +13,6 @@
 [submodule "src/github.com/floreks/led-max7219"]
 	path = src/github.com/floreks/led-max7219
 	url = git@github.com:floreks/led-max7219.git
+[submodule "src/github.com/floreks/breathalyzer"]
+	path = src/github.com/floreks/breathalyzer
+	url = git@github.com:floreks/breathalyzer.git
