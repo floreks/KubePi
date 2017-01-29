@@ -4,3 +4,8 @@ src/*
 
 # Do not add private token file
 token
+
+# Go
+.cache/
+pkg/
+bin/
