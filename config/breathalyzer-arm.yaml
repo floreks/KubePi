@@ -7,7 +7,7 @@ items:
     labels:
       app: breathalyzer
     name: breathalyzer
-    namespace: node-1
+    namespace: default
   spec:
     replicas: 1
     selector:
@@ -19,7 +19,7 @@ items:
           app: breathalyzer
       spec:
         nodeSelector:
-          target: node-1
+          target: master
         containers:
           - name: breathalyzer
             securityContext:
@@ -58,7 +58,7 @@ items:
     labels:
       app: breathalyzer
     name: breathalyzer
-    namespace: node-1
+    namespace: default
   spec:
     type: NodePort
     ports:
