@@ -1,0 +1,68 @@
+kind: List
+apiVersion: v1
+items:
+- kind: Deployment
+  apiVersion: extensions/v1beta1
+  metadata:
+    labels:
+      app: breathalyzer
+    name: breathalyzer
+    namespace: node-1
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: breathalyzer
+    template:
+      metadata:
+        labels:
+          app: breathalyzer
+      spec:
+        nodeSelector:
+          target: node-1
+        containers:
+          - name: breathalyzer
+            securityContext:
+              privileged: true
+            image: floreks/breathalyzer
+            imagePullPolicy: Always
+            ports:
+              - containerPort: 3000
+                protocol: TCP
+            volumeMounts:
+              - mountPath: /sys/class/gpio
+                name:      sys-class-gpio
+              - mountPath: /sys/devices
+                name:      sys-devices
+              - mountPath: /sys/bus
+                name:      sys-bus
+              - mountPath: /dev/gpiomem
+                name:      dev-gpio
+            args:
+        volumes:
+          - name:     sys-class-gpio
+            hostPath:
+              path:   /sys/class/gpio
+          - name:     sys-devices
+            hostPath:
+              path:   /sys/devices
+          - name:     sys-bus
+            hostPath:
+              path:   /sys/bus
+          - name:     dev-gpio
+            hostPath:
+              path:   /dev/gpiomem
+- kind: Service
+  apiVersion: v1
+  metadata:
+    labels:
+      app: breathalyzer
+    name: breathalyzer
+    namespace: node-1
+  spec:
+    type: NodePort
+    ports:
+    - port: 3000
+      targetPort: 3000
+    selector:
+      app: breathalyzer
