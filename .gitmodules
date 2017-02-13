@@ -7,3 +7,6 @@
 [submodule "src/github.com/floreks/breathalyzer"]
 	path = src/github.com/floreks/breathalyzer
 	url = git@github.com:floreks/breathalyzer.git
+[submodule "src/github.com/floreks/kubepi-monitor"]
+	path = src/github.com/floreks/kubepi-monitor
+	url = https://github.com/olebedev/go-starter-kit
