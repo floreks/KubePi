@@ -12,5 +12,6 @@ bin/
 
 # Thesis temp files
 thesis/*
+!thesis/images/
 thesis/!*.tex
 thesis/!*.pdf
