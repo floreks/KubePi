@@ -2,15 +2,15 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
-% \usepackage{wrapfig}
+\usepackage{wrapfig}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{txfonts}
-% \usepackage{placeins}
+\usepackage{placeins}
 \usepackage{listings}
 \usepackage{pdfpages}
 \usepackage{color}
-% \usepackage{framed}
-% \usepackage{filecontents}
+\usepackage{framed}
+\usepackage{filecontents}
 \usepackage{caption}
 
 \usepackage[polish]{babel}
@@ -30,22 +30,56 @@
 
 \begin{document}
 
-\tableofcontents    % generuje spis treści ze stronami !!!
+\includepdf{images/title-page.png}
+
+\tableofcontents    % generuje spis treści ze stronami
 
 \chapter{Wstęp}\label{chap:wstep}
-
 \section{Problematyka i zakres pracy}
-\section{Metoda badawcza}
-\section{Przegląd literatury w dziedzinie}
-\section{Układ pracy}
+Wraz z rozwojem Internetu Rzeczy na świecie powstają coraz to nowe urządzenia mające na celu automatyzację działań i ułatwienie życia człowieka. Dzięki ich zdolności do wzajemnej komunikacji, wymiany informacji oraz zdalnego zarządzania zasobami stają się one coraz bardziej popularne, a wręcz wymagane w życiu codziennym coraz większej grupy osób. Sterowanie oświetleniem, radiem czy innymi sprzętami elektronicznymi za pomocą naszego smartfona już nikogo nie dziwi. W wielu przypadkach urządzenia te muszą zbierać bardzo duże ilości danych oraz przesyłać je do centralnego punktu. Powoduje to ogromny wzrost ilości danych, które nie są w stanie zostać obsłużone przez jeden serwer. Powstaje więc potrzeba stworzenia niezawodnych, wydajnych i bezpiecznych systemów o wysokiej dostępności. \\
+\indent Technologie wirtualizacji
+\footnote{\cite{virtualization}}
+powstały w celu realizacji tych wymagań. Wirtualizacja serwerów dawno już wyparła tradycyjne serwery, które zostały zastąpione przez rozwiązania chmurowe. Niezależność sprzętowa, lepsza utylizacja zasobów, większe bezpieczeństwo, łatwa migracja danych i redukcja kosztów to tylko niektóre z wielu zalet wirtualizacji. Właśnie ta niezależność sprzętowa pozwala na coraz lepsze wykorzystanie urządzeń opartych na architekturze ARM, których głównymi zaletami są mały koszt i niewielki pobór mocy, a dzięki coraz lepszej optymalizacji systemów i postępującej miniaturyzacji, również rosnąca wydajność. \\
+	\indent Proponowanym rozwiązaniem powyższych problemów będzie projekt o nazwie KubePi. Projekt ten skupia się na wirtualizacji opartej o kontenery Dockera
+	\footnote{\cite{docker}}
+zarządzane przez system zarządzania klastrem Kubernetes i ma na celu stworzenie rozproszonego systemu służącego do monitorowania otoczenia. Przykładowy klaster opierać się będzie na dwóch mikrokontrolerach RaspberryPi. Do pierwszego urządzenia będącego zarazem głównym węzłem klastra podłączone zostaną trzy czujniki: temperatury, wilgotności oraz alkoholu. Jego zadaniem będzie udostępnianie zbieranych informacji. Drugie urządzenie zostanie natomiast wyposażone w wyświetlacz LED
+	\footnote{\cite{led}}
+, co pozwoli na odczyt i wyświetlanie temperatury raportowanej przez pierwsze urządzenie. Dodatkowo w klastrze zostanie zainstalowana aplikacja webowa
+\footnote{\cite{webapp}}
+pozwalająca na zdalny monitoring. W celu lepszego zobrazowania komunikacji między urządzeniami zostanie ona uruchomiona na drugim urządzeniu.
 
-\chapter{KubePi}\label{chap:kubepi}
-\chaptermark{KubePi}
+\section{Metoda badawcza}
+% TODO
+
+\section{Przegląd literatury w dziedzinie}
+% TODO
+
+\section{Układ pracy}
+Celem pracy jest zaproponowanie architektury i sprawdzenie w działaniu rozproszonego systemu wysokiej dostępności służącego do monitorowania otoczenia. \\
+\indent Rozdział pierwszy zawiera szczegółowy opis problemu. Zostają w nim przedstawione różne problemy związane z wydajnością oraz bezpieczeństwem tradycyjnych rozwiązań, wraz z opisem metod badawczych użytych do analizy tematu. Podsumowane zostają również główne założenia i cele pracy. Na koniec przeprowadzony zostaje przegląd literatury związanej z tematem, z naciskiem na kluczowe zagadnienia dotyczące wirtualizacji, rozwiązań chmurowych oraz mikrokontrolerów opartych na architekturze ARM, wraz z krótkim opisem użytych źródeł. \\
+\indent W rozdziale drugim przybliżona zostaje tematyka systemów zarządzania klastrami pod kątem ich wymagań, bezpieczeństwa oraz komunikacji sieciowej. Kolejnym krokiem jest dokładniejsze zapoznanie się z wirtualizacją, a konkretniej wirtualizacją opartą o kontenery Dockera, co pozwoli lepiej zrozumieć ideę pracy. Następnie po krótce przedstawione zostają tematyki związane z mikrokontrolerami oraz Internetem Rzeczy. \\
+\indent Rozdział 3 skupia się na analizie istniejących systemów zarządzania klastrami oraz ich pochodnych. Dodatkowo przedstawiona zostaje analiza kilku systemów typu Smart Home
+\footnote{\cite{smarthome}}
+. \\
+\indent Kolejny rozdział opisuję fazę projektowania i implementacji projektu KubePi. Spisane zostają wymagania funkcjonalne aplikacji, a także ograniczenia projektowe. Wymienione i opisane zostają użyte technologie. Opisany zostaje proces konfiguracji urządzeń, sieci oraz systemu. Następnie wskazane zostają kluczowe punkty aplikacji wraz z kodem źródłowym i opisem. W kolejny kroku przechodzimy do fazy testów stworzonych aplikacji jak i całego systemu. \\
+\indent W podsumowaniu pracy opisane zostają słabe i mocne strony przedstawionego rozwiązania. Na podstawie uzyskanych wyników następuje ocena możliwości i przydatności zaproponowanego rozwiązania. Na końcu omówione zostają możliwe perspektywy rozwoju projektu.
+
+\chapter{Podstawy teoretyczne}\label{chap:background}
 
 \section{Podstawowe definicje}
-\section{Istniejące aplikacje}
-\section{Wymagania aplikacji}
-\section{Wady i zalety istniejących rozwiązań}
+\subsection{Wirtualizacja oparta na Linuksie}
+\subsection{Wirtualizacja oparta o nadzorcę}
+\subsection{Wirtualizacja oparta na kontenerach}
+\subsubsection{Docker}
+\subsection{Mikrokontroler RaspberryPi}
+\subsubsection{Protokoły komunikacji}
+\subsection{Kompilacja skrośna}
+
+\section{Systemy zarządzania kontenerami}
+\subsection{Kubernetes}
+\subsubsection{Architektura}
+\subsection{Docker Swarm}
+\subsection{Resin.io}
 
 \chapter{Projekt KubePi} \label{rozdz.czesc.prakt}
 \section{Analiza wymagań}
@@ -55,7 +89,6 @@
 \section{Przykład użycia}
 \section{Możliwości rozszerzania aplikacji}
 \chapter{Podsumowanie}
-\section{Dyskusja wyników}
 
 \addcontentsline{toc}{chapter}{Bibliografia}
 \begin{thebibliography}{99}

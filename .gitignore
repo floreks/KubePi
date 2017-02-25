@@ -9,3 +9,8 @@ token
 .cache/
 pkg/
 bin/
+
+# Thesis temp files
+thesis/*
+thesis/!*.tex
+thesis/!*.pdf
