@@ -13,6 +13,7 @@
 \usepackage{filecontents}
 \usepackage{caption}
 \usepackage{adjustbox}
+\usepackage{textcomp}
 
 \usepackage[polish]{babel}
 
@@ -40,6 +41,50 @@
 
 \newtheorem{cloudcomputing}{Chmura obliczeniowa}
 
+\lstset{
+    frame=single,
+    breaklines=true,
+    postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}
+}
+
+\newcommand\YAMLcolonstyle{\color{red}\mdseries}
+\newcommand\YAMLkeystyle{\color{black}\bfseries}
+\newcommand\YAMLvaluestyle{\color{blue}\mdseries}
+
+\makeatletter
+
+% here is a macro expanding to the name of the language
+% (handy if you decide to change it further down the road)
+\newcommand\language@yaml{yaml}
+
+\expandafter\expandafter\expandafter\lstdefinelanguage
+\expandafter{\language@yaml}
+{
+  keywords={true,false,null,y,n},
+  keywordstyle=\color{darkgray}\bfseries,
+  basicstyle=\YAMLkeystyle,                                 % assuming a key comes first
+  sensitive=false,
+  comment=[l]{\#},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\YAMLvaluestyle\ttfamily,
+  moredelim=[l][\color{orange}]{\&},
+  moredelim=[l][\color{magenta}]{*},
+  moredelim=**[il][\YAMLcolonstyle{:}\YAMLvaluestyle]{:},   % switch to value style at :
+  morestring=[b]',
+  morestring=[b]",
+  literate =    {---}{{\ProcessThreeDashes}}3
+                {>}{{\textcolor{red}\textgreater}}1     
+                {|}{{\textcolor{red}\textbar}}1 
+                {\ -\ }{{\mdseries\ -\ }}3,
+}
+
+% switch to key style at EOL
+\lst@AddToHook{EveryLine}{\ifx\lst@language\language@yaml\YAMLkeystyle\fi}
+\makeatother
+
+\newcommand\ProcessThreeDashes{\llap{\color{cyan}\mdseries-{-}-}}
+
 \begin{document}
 
 \includepdf{images/title-page.png}
@@ -65,10 +110,39 @@ pozwalająca na zdalny monitoring. W celu lepszego zobrazowania komunikacji mię
 W tej części opisane zostaną powody wyboru tematu związanego z systemem monitorowania otoczenia przy użyciu nowoczesnych technologii w oparciu o mikrokontrolery. Głównym powodem jest wykazanie użyteczności systemów chmurowych wysokiej dostępności w oparciu o mikrokontrolery. Wymaga to gwarancji pracy systemu nawet w razie uszkodzenia jednego z węzłów klastra. Drugim powodem jest zbadanie możliwości mikrokontrolerów jako alternatywy dla standardowych systemów chmurowych oraz porównanie wydajności względem ceny przy budowaniu klastra. Ze względu na małe rozmiary i koszt mikrokontrolery takie jak Raspberry Pi mogą służyć jako tania alternatywa do budowy inteligentnego systemu dla naszego domu i nie tylko.
 
 \section{Metoda badawcza}
-% TODO
+%TODO
+\begin{enumerate}
+\item Studia literaturowe z dziedziny generowania opisu mapowania obiektowo-relacyjnego w języku C++. \\ \\
+Obecnie dostępne źródła z tej dziedziny nie są sformalizowane. Dostępne są jedynie opisy i dokumentacje istniejących aplikacji, które uwzględniają
+w sposób ogólny ich budowę. Znalezione i użyte w tej pracy źródła nie są dostępne w języku polskim, więc muszą być tłumaczone w większości z języka angielskiego.
+Jako że nie ma oficjalnych książek dotyczących tematyki generowania opisu mapowania obiektowo-relacyjnego, większość źródeł tu zebranych to źródła elektroniczne, artykuły i dokumentacje.
+\item Analiza wymagań aplikacji szkieletowych generujących opis mapowania obie\-ktowo-relacyjnego. \\ \\
+Narzędzia zajmujące się generowaniem opisu mapowania obiektowo-relacyj\-nego są zazwyczaj tylko dodatkami do typowych aplikacji typu ORM. Nie znajdziemy tu
+modelu aplikacji, na którym można bazować. Wymagania postawione takiej aplikacji są zazwyczaj takie same i są one podyktowane przez aplikacje zajmujące się mapowaniem obiektowo-relacyjnym. Podobnie jest i w tym przypadku gdzie wymagania generatora opisu są postawione przez drugi moduł aplikacji zajmujący się mapowaniem obiektowo-relacyjnym.
+\item Proces projektowania i tworzenia Qubica. \\ \\
+W oparciu o zebrane informacje i wymagania aplikacji szkieletowych służą\-cych do generowania opisu mapowania obiektowo-relacyjnego zostanie stworzona aplikacja szkieletowa mająca na celu rozwiązanie problemów zidentyfikowanych w procesie analizy.
+\item Testy i wnioski dotyczące stworzonego narzędzia do generowania warstwy danych aplikacji w oparciu o bazę danych. \\ \\
+Metoda ta służy do wyciągnięcia wniosków na temat stworzonej aplikacji. Przeprowadzone zostaną testy porównawcze. Na podstawie wyników testów wyciągnięte zostaną odpowiednie wnioski na temat sposobu rozwiązania przedstawionych w pracy problemów oraz Qubica. Wszystko to pozwoli stwierdzić czy proponowane rozwiązanie jest lepsze, tańsze, szybsze od porównywanych.
+
+\end{enumerate}
+
+\clearpage
 
 \section{Przegląd literatury w dziedzinie}
-% TODO
+%TODO
+\subsubsection{Źródła z zakresu języka C++}
+	\indent Użyte w tej pracy źródła dotyczące języka C++ służą przede wszystkim poznaniu technik programowania bibliotek współdzielonych oraz technik metaprogramowania. Dodatkowym celem przy pisaniu samej aplikacji jest chęć poznania nowego standardu języka C++11, który również jest przedstawiony w użytych źródłach. Szczegółowe omówienie tego standardu zostało przedstawione na stronie twórcy języka i służyć będzie jako główne źródło wiedzy \cite{strostrup}.
+Sposób tworzenia bibliotek i techniki metaprogramowania zostały opisane w książce Advanced C++ Metaprogramming \cite{c++2}.
+\subsubsection{Źródła z zakresu narzędzi i aplikacji do mapowania obiektowo-relacyjnego}
+	\indent Tematyka generowania opisu mapowania obiektowo-relacyjnego jest związana z narzędziami ORM i brak jest książek dedykowanych tej tematyce. Do zrozumienia samej idei działania generatora należy przybliżyć działanie narzędzi do mapowania obiektowo-relacyjnego. W pozycjach EJB 3 Java persistence API \cite{ejb} oraz Hibernate w akcji \cite{hibernateInAction}
+znajdziemy opis działania narzędzi typu ORM oraz techniki mapowania obiektowo-relacyjnego.
+\subsubsection{Źródła z zakresu działania aplikacji szkieletowej Qt}
+	\indent Aplikacja szkieletowa Qt to zestaw bibliotek i narzędzi przydatnych programistom. Dzięki mechanizmowi refleksji, wsparciu dialektów SQL czy prostej budowie aplikacji graficznych znacznie ułatwia tworzenie dużych aplikacji. Użyta książka Introduction to Design Patterns in C++ with Qt \cite{c++patterns}
+opisuje w prosty sposób mechanizm refleksji, wzorce czy tworzenie bibliotek przy użyciu tego frameworka.
+Dodatkowo głównym narzędziem w etapie tworzenia aplikacji będzie dokumentacja Qt dostępna w internecie pod adresem \cite{qtframework}.
+\subsubsection{Źródła z zakresu SQL}
+	\indent W celu generowania opisu bazy danych potrzebna jest znajomość struktury bazy, typów pól, połączeń. Wymaga to dla niektórych dialektów SQL pisania dość nietypowych zapytań. Potrzebne informacje zostały zasięgnięte ze źródeł elektronicznych i odpowiednich dokumentacji konkretnych dialektów, m. in: stron internetowa z dokumentacją dialektu MySQL \cite{mysqlweb}.
+
 
 \section{Układ pracy}
 Celem pracy jest zaproponowanie architektury i sprawdzenie w działaniu rozproszonego systemu wysokiej dostępności służącego do monitorowania otoczenia. \\
@@ -345,7 +419,7 @@ Jednak pomimo wielu zalet, nie jest on na tyle zaawansowany i bezpieczny w poró
 
 \section{Mikrokontroler Raspberry Pi}
 Stworzona przez Raspberry Pi Foundation seria mikrokontrolerów Raspberry Pi miała swój początek w Wielkiej Brytanii, gdzie promowane były one jako idealne do nauki podstaw budowy i działania komputerów. Przez lata kolejne modele były ulepszane i obecnie są one używane w zagadnieniach Internetu Rzeczy, robotyce, inteligentnych domach i wielu innych dziedzinach. \\ \\
-Poniższa tabela prezentuje porównanie najpopularniejszych modeli Raspberry Pi, tj.: A, B, A+, B+, wersja druga modelu B oraz 3. W pracy zostaną użyte modele wersja druga B oraz najnowsza obecnie Raspberry Pi 3, w której znaczącej poprawie uległy taktowanie procesora oraz wielkość pamięci RAM. Dzięki temu może być ona stosowana jako główny węzeł klastra, kontrolujący pozostałe węzły.
+Poniższa tabela prezentuje porównanie najpopularniejszych modeli Raspberry Pi, tj.: A, B, A+, B+, wersji drugiej modelu B oraz wersji trzeciej. W pracy zostaną użyte modele wersja druga B oraz najnowsza obecnie Raspberry Pi 3, w której znaczącej poprawie uległy taktowanie procesora oraz wielkość pamięci RAM. Dzięki temu może być ona stosowana jako główny węzeł klastra, kontrolujący pozostałe węzły.
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.81\textwidth]{images/placeholder.png}
@@ -394,10 +468,34 @@ Dodatkowo system powinien umożliwiać bezpieczny sposób komunikacji z klastrem
 \subsection{Ograniczenia projektu}
 Ze względu na skomplikowany proces konfiguracji systemu i klastra, projekt nie będzie umożliwiał łatwego przeniesienia i uruchomienia w innej podsieci. Wymóg stosowania odpowiedniej topologii i narzędzi do zarządzania siecią w celu umożliwienia odpowiedniej komunikacji między elementami systemu wymaga aby urządzenia miały przydzielany stały adres IP lub minimalnie adres z wcześniej skonfigurowanego zakresu podsieci. Ta opcja jednak wymagałaby dodatkowych kroków i odpowiedniej konfiguracji serwera DNS\footnote{\cite{dns}}, co nie zostało uwzględnione w tym projekcie.
 
-\section{Użyte technologie}
-\subsection{Język programowania}
-Do stworzenia aplikacji przykładowych wybrany został język Go. Najważniejszym czynnikiem decydującym za tym wyborem była obecność dużej ilości bibliotek ułatwiających komunikację, ze sprzętem oraz łatwa kompilacja aplikacji przeznaczonych na różne architektury, w tym ARM. Dodatkowym czynnikiem decydującym za językiem Go jest domyślna kompilacja aplikacji do statycznego pliku binarnego, który nie wymaga dodatkowych zależności, a co za tym idzie w prosty sposób może zostać uruchomiony w kontenerze Dockera. Ostatnią zaletą jest mała zajętość pamięci i czasu procesora w porównaniu z językami takimi jak Java, co jest bardzo ważne przy uruchamianiu aplikacji w kontenerze na mikrokontrolerach typu Raspberry Pi.\\ \\
-Dodatkowo w celu stworzenia aplikacji webowej użyta została biblioteka ReactJS. Głównym powodem przemawiającym za wyborem tej biblioteki była popularność, duże wsparcie ze strony społeczeństwa oraz niewielki rozmiar i prostota użycia.
+\section{Sprzęt i technologie}
+\subsection{Mikrokontrolery}
+Na potrzeby projektu i budowy klastra zostały użyte dwa mikrokontrolery Raspberry Pi, jeden w wersji drugiej, model B, natomiast drugi w wersji trzeciej. Na obu mikrokontrolerach zainstalowany został darmowy system HypriotOS \footnote{HypriotOS - link}, który natywnie wspiera Dockera i jest dobrze przygotowany do obsługi Kubernetesa. Nowszy model płytki w wersji trzeciej, ze względu na lepsze parametry techniczne został użyty jako główny węzeł klastra, a zarazem jednostka sterująca i zarządzająca klastrem. Druga płytka natomiast została użyta jako dodatkowy węzeł klastra. Ilość węzłów klastra może być bez problemu zwiększona. Kubernetes w najnowszej obecnie wersji, tj. \textit{1.6} może obsłużyć nawet do 5000 węzłów. 
+\subsection{Urządzenia peryferyjne}
+\subsubsection{DHT11}
+Popularny czujnik temperatury i wilgotności powietrza z interfejsem cyfrowym, jednoprzewodowym. Zakres pomiarowy: temperatura 0 \textdegree{}C - 50 \textdegree{}C , wilgotność 20 - 90 \%RH \cite{DHT11}. % BOTLAND
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.81\textwidth]{images/placeholder-wide.png}
+	\caption{Czujnik temperatury i wilgotności DHT11.}
+\end{figure}
+\subsubsection{DS18B20}
+Cyfrowy czujnik temperatury DS18B20 z interfejsem 1-wire. Działa w zakresie od -55 \textdegree{}C do 125 \textdegree{}C. Zasilany jest napięciem od 3,0 V do 5,5 V \cite{DS18B20}. % BOTLAND
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.81\textwidth]{images/placeholder-wide.png}
+	\caption{Czujnik temperatury DS18B20.}
+\end{figure}
+\subsubsection{MAX7219}
+Moduł matrycy złożonej z 128 czerwonych diod LED ułożonych w prostokąt 16 x 8 pikseli. Płytka posiada zamontowane złącza dopasowane do pinów GPIO Raspberry Pi \cite{MAX7219}. % BOTLAND
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.81\textwidth]{images/placeholder-wide.png}
+	\caption{Wyświetlacz LED MAX7219 (16x8).}
+\end{figure}
+\subsection{Języki programowania}
+Do stworzenia aplikacji przykładowych wybrany został język Go. Najważniejszym czynnikiem decydującym za tym wyborem była obecność dużej ilości bibliotek ułatwiających komunikację ze sprzętem oraz łatwa kompilacja aplikacji przeznaczonych na różne architektury, w tym architekturę ARM. Dodatkowym czynnikiem decydującym o wyborze języka Go jest domyślna kompilacja aplikacji do statycznego pliku binarnego, który nie wymaga dodatkowych zależności, a co za tym idzie w prosty sposób może zostać uruchomiony w kontenerze Dockera. Ostatnią zaletą jest mała zajętość pamięci i czasu procesora w porównaniu z językami takimi jak Java, co jest bardzo ważne przy uruchamianiu aplikacji w kontenerze na mikrokontrolerach typu Raspberry Pi.\\ \\
+Dodatkowo w celu stworzenia aplikacji webowej użyta została biblioteka ReactJS. Głównym atutem przemawiającym za wyborem tej biblioteki była popularność, duże wsparcie ze strony społeczeństwa oraz niewielki rozmiar i prostota użycia.
 
 \begin{figure}[h]
 	\centering
@@ -406,20 +504,184 @@ Dodatkowo w celu stworzenia aplikacji webowej użyta została biblioteka ReactJS
 \end{figure}
 
 \subsection{Biblioteki}
+Do stworzenia aplikacji przykładowych użytych zostało kilka otwartoźródłowych bibliotek dostępnych na portalu Github. Poniżej pokrótce została opisana każda z nich:
 \begin{itemize}
-\item{go-restful}
-\item{go-rpio}
-\item{go-dht}
-\item{goDS18B20}
-\item{spidev}
+\item{\textit{go-restful} --- Jedna z najpopularniejszych bibliotek dla języka Go używanych do tworzenia tak zwanych RESTful Webservices\footnote{\cite{rest}}.}
+\item{\textit{go-rpio} --- Mała biblioteka pozwalająca w prosty sposób na obsługę pinów GPIO mikrokontrolerów Raspberry Pi. Użyta przy tworzeniu aplikacji do wykrywania alkoholu.}
+\item{\textit{go-dht} --- Biblioteka wspierająca czujniki temperatury i wilgotności DHT11 i DHT22. Pozwala na odczyt pomiarów czujnika na mikrokontrolerach Raspberry Pi.}
+\item{\textit{goDS18B20} --- Podobnie do biblioteki \textit{go-dht} pozwala na odczyt pomiarów czujnika temperatury \textit{DS18B20}.}
+\item{\textit{spidev} --- Biblioteka pozwalająca na obsługę urządzeń wykorzystujących interfejs komunikacyjny SPI. Użyta do obsługi wyświetlacza led \textit{MAX7219}.}
+\item{\textit{ReactJS} --- Biblioteka stworzona przez firmę Facebook napisana w języku JavaScript, pozwalająca w prosty sposób tworzyć interfejs graficzny aplikacji internetowych.}
 \end{itemize}
 \subsection{Inne narzędzia}
 \subsubsection{Flannel}
+Jest menadżerem wirtualnej sieci, który umożliwia stworzenie wirtualnej podsieci dla każdego węzła w klastrze. W dużym uproszczeniu pozwala on na komunikację między aplikacjami znajdującymi się w kontenerach uruchomionych na różnych węzłach klastra, przy czym nie jest wymagane aby węzły klastra przebywały w tej samej podsieci. Dzięki takim narzędziom jak Flannel, zwanym \textit{Overlay Networks} możliwa jest komunikacja między aplikacjami uruchomionymi w rozproszonym klastrze.
 \subsubsection{Github}
+Dodatkowym narzędziem użytym w procesie tworzenia aplikacji był system kontroli wersji o nazwie GIT. Pozwalało to kontrolować cały proces powstawania Qubica. Całość jest zintegrowana z portalem Github i przechowywana na prywatnym repozytorium.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.81\textwidth]{images/placeholder.png}
+	\caption{Log kontrolny zmian projektowych z portalu Github.}
+\end{figure}
 \subsubsection{Kubernetes Dashboard}
+Jest to otwartoźródłowy projekt zapoczątkowany przez firmę Google, który ma na celu umożliwienie zarządzania klastrem Kubernetesa z poziomu przeglądarki. Pozwala użytkownikom na zarządzanie aplikacjami uruchomionymi w klastrze, monitorowanie ich stanu, przeglądanie logów oraz uruchamianie nowych aplikacji.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.81\textwidth]{images/placeholder.png}
+	\caption{Wygląd aplikacji Kubernetes Dashboard.}
+\end{figure}
+
+\clearpage
+
 \section{Projekt}
+\subsection{Architektura systemu}
+W tej sekcji przedstawiona zostanie architektura tworzonego systemu oraz schemat połączeń sensorów z płytkami Raspberry Pi. Na poniższym rysunku zobaczyć możemy ogólną architekturę systemu wraz rozkładem uruchomionych procesów. \\
+Na głównym węźle klastra uruchomione są wszystkie procesy zarządzające klastrem czyli:
+\begin{itemize}
+\item{api-server}
+\item{kube-scheduler}
+\item{kube-controller-manager}
+\item{kube-proxy}
+\item{kubelet}
+\end{itemize}
+
+Dodatkowo uruchomiony jest proces demon \textit{flanneld}, którego zadaniem jest utworzenie wirtualnej podsieci dla klastra. Możemy również zauważyć podłączone sensory z uwzględnieniem konkretnych interfejsów przy użyciu których komunikują się one z urządzeniem.
+
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[height=0.41\textwidth, angle=90]{images/KubePi-Architecture.png}
+	\caption{Architektura systemu KubePi.}
+\end{figure}
+\FloatBarrier	
+
+Poniższy schemat obrazuje szczegółowo w jaki sposób konkretne sensory zostały podłączone do mikrokontrolera Raspberry Pi 3. W prawym górnym rogu znajduje się czujnik gazów MQ-3 służący jako wykrywacz alkoholu. Niebieski sensor znajdujący się po lewej stronie to czujnik temperatury i wilgotności DHT11, natomiast najmniejszy sensor znajdujący się na środku to czujnik temperatury DS18B20.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.99\textwidth]{images/rpi-master.png}
+	\caption{Schemat podłączenia sensorów do płytki Raspberry Pi 3.}
+\end{figure}
+\FloatBarrier	
+
+Ostatnie zdjęcie pokazuje podłączenie matrycy LED mającej za zadanie wyświetlać aktualną temperaturę do mikrokontrolera Raspberry Pi 2. Ze względu na duża ilość kabli zrobione zostało jedynie zdjęcie poglądowe. Użyty moduł można również wpiąć bezpośrednio w płytkę Raspberry Pi bez użycia dodatkowych kabli. 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[height=1\textwidth]{images/rpi-node.jpg}
+	\caption{Zdjęcie podłączenia matrycy LED 16x8 MAX7219 do płytki Raspberry Pi 2.}
+\end{figure}
+\FloatBarrier	
 \subsection{Przygotowanie i konfiguracja Raspberry Pi}
+\subsubsection{Instalacja systemu}
+Pierwszym krokiem będzie zainstalowanie systemu HypriotOS. W tym celu należy ściągnąć i wypakować obraz systemu z oficjalnej strony: \textit{https://blog.hypriot.com/downloads/}. Dla potrzeb pracy użyty został system w wersji \textit{1.1.0} jednak nowsze obrazy również powinny działać. W wersji 1.1.0 występuje problem z interfejsem \textit{1-Wire}, który trzeba ręcznie naprawić po instalacji. 
+
+Następnym krokiem będzie instalacja obrazu na karcie SD. Bardzo dobrym programem, który dostępny jest na większość systemów jest Etcher dostępny pod adresem: \textit{https://blog.hypriot.com/downloads/}.
+
+Przed pierwszym uruchomieniem możemy zmodyfikować nazwę hosta systemu oraz opcjonalnie ustawić domyślne połączenie z siecią WiFi. W tym celu należy wyszukać na urządzeniu plik o nazwie \textit{device-init.yaml}, a następnie zmienić \textit{hostname} oraz jeśli chcemy aby urządzenie używało sieci WiFi odkomentować i zmienić domyślne ustawienia. Poniżej możemy zobaczyć przykładową zawartość pliku \textit{device-init.yaml}.
+
+\begin{lstlisting}[language=yaml]
+# hostname for your HypriotOS device
+hostname: kube-master
+
+# optional wireless network settings
+wifi:
+  interfaces:
+     wlan0:
+       ssid: "test"
+       password: "test"
+\end{lstlisting}
+
+\subsubsection{Pierwsze uruchomienie}
+W celu wykonania następnych operacji musimy mieć dostęp do systemu zainstalowanego na urządzeniu. Jedną z możliwości jest podłączenie myszy, klawiatury oraz wyświetlacza HDMI do naszego urządzenia jednak nie jest to zbyt wygodne rozwiązanie. Drugą opcją jest znalezienie adresu IP jaki został przydzielony urządzeniu i komunikacja przy użyciu protokołu SSH. Na systemach linux do znalezienia IP możemy użyć polecenia \textit{nmap}. Więcej informacji o jego użyciu można znaleźć na stronie systemu HypriotOS. Najprostszym sposobem jednak jest zalogowanie się na stronę naszego domowego routera i sprawdzenie listy podłączonych klientów. Nasze urządzenie powinno identyfikować się ustawioną wcześniej nazwą hosta. W moim przypadku jest to nazwa \textit{kube-master}, a urządzeniu przydzielony został adres IP \textit{192.168.0.100}.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\textwidth]{images/tp-link-console.png}
+	\caption{Konsola admina routera TP-Link.}
+\end{figure}
+\FloatBarrier
+
+Do połączenia z urządzeniem wykorzystam darmowy program putty\footnote{putty - strona domowa} służący właśnie do komunikacji z innymi systemami używając między innymi protokołu SSH. Domyśle dane logowania to \textit{pirate:hypriot}. Poniżej możemy zobaczyć zrzut ekranu z programu putty.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.9\textwidth]{images/putty.png}
+	\caption{Zrzut ekranu z programu putty.}
+\end{figure}
+\FloatBarrier
+
+\subsubsection{Konfiguracja systemu}
+Najpierw należy uruchomić interfejs \textit{1-wire}. W tym celu należy wyedytować plik \textit{/boot/config.txt} i dodać do niego:
+
+\begin{lstlisting}
+dtoverlay=w1-gpio
+\end{lstlisting}
+
+Następnie należy uruchomić ponownie urządzenie. Jeśli w folderze \textit{/sys/bus} nie pojawi się folder \textit{w1} oznacza to, że najprawdopodobniej w tej wersji systemu również występuje błąd z ładowaniem sterownika interfejsu \textit{1-wire}. Aby go naprawić należy wykonać następującą komendę i ponownie uruchomić system.
+
+\begin{lstlisting}
+sudo mv /boot/overlays/w1-gpio.dtbo \
+	/boot/overlays/w1-gpio.dtb
+\end{lstlisting}
+
 \subsection{Instalacja i konfiguracja Kubernetesa}
+W celu zainstalowania Kubernetesa skorzystamy z narzędzia o nazwie \textit{kubeadm}, które zostało stworzone w celu uproszczenia procesu instalacji i konfiguracji klastra. Zacznijmy od dodania repozytoriów oraz instalacji \textit{kubeadm}. Wszystkie komendy należy wykonywać jako \textit{root}. \\
+
+\begin{lstlisting}
+apt-get update && apt-get install -y apt-transport-https
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+deb http://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+apt-get update
+apt-get install -y kubelet kubeadm kubectl kubernetes-cni
+\end{lstlisting}
+
+\noindent Kolejnym krokiem jest inicjalizacja głównego węzła klastra. \\
+
+\begin{lstlisting}
+kubeadm init --pod-network-cidr 10.244.0.0/16
+\end{lstlisting}
+
+Ze względu na pobieranie dość dużej ilości proces ten może potrwać kilkanaście minut. Po zakończeniu uruchamiania należy zapisać sobie polecenie służące do dołączania dodatkowych węzłów do klastra. Poniżej możemy zobaczyć przykładowe polecenie. Token zostaje automatycznie wygenerowany i wygasa po określonym czasie.
+
+\begin{lstlisting}
+kubeadm join --token 312a65.2cc5af081672daa6 192.168.0.100:6443
+\end{lstlisting}
+
+Następnie ustawiamy narzędzie \textit{kubectl}, aby komunikowało się z naszym klastrem.
+
+\begin{lstlisting}
+mkdir /home/pirate/.kube
+sudo cp /etc/kubernetes/admin.conf /home/pirate/.kube/config
+sudo chown -R pirate /home/pirate/.kube
+\end{lstlisting}
+
+Następnie już jako użytkownik \textit{pirate} możemy sprawdzić stan klastra.
+
+\begin{lstlisting}
+kubectl get node
+NAME          STATUS     AGE       VERSION
+kube-master   NotReady   11m       v1.6.1
+\end{lstlisting}
+
+Domyślnie główny węzeł klastra jest zablokowany i niemożliwe jest uruchamianie na nim aplikacji. Należy usunąć tą blokadę następującym poleceniem:
+
+\begin{lstlisting}
+kubectl taint nodes --all node-role.kubernetes.io/master-
+\end{lstlisting}
+
+Ostatnim krokiem jest uruchomienie zarządcy sieci, czyli \textit{flannela} w celu umożliwienia komunikacji między aplikacjami w klastrze.
+
+\begin{lstlisting}
+kubectl create -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel-rbac.yml
+kubectl create --namespace kube-system -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+\end{lstlisting}
+
+%   kubeadm join --token 312a65.2cc5af081672daa6 192.168.0.100:6443
+
+
 \subsection{Projekt i konfiguracja aplikacji przykładowych}
 \section{Opis użytkowania}
 \section{Przykład użycia}
