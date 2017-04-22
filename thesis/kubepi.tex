@@ -629,39 +629,39 @@ sudo mv /boot/overlays/w1-gpio.dtbo \
 W celu zainstalowania Kubernetesa skorzystamy z narzędzia o nazwie \textit{kubeadm}, które zostało stworzone w celu uproszczenia procesu instalacji i konfiguracji klastra. Zacznijmy od dodania repozytoriów oraz instalacji \textit{kubeadm}. Wszystkie komendy należy wykonywać jako \textit{root}. \\
 
 \begin{lstlisting}
-apt-get update && apt-get install -y apt-transport-https
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
-deb http://apt.kubernetes.io/ kubernetes-xenial main
-EOF
-apt-get update
-apt-get install -y kubelet kubeadm kubectl kubernetes-cni
+$ apt-get update && apt-get install -y apt-transport-https
+$ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+$ cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+  deb http://apt.kubernetes.io/ kubernetes-xenial main
+  EOF
+$ apt-get update
+$ apt-get install -y kubelet kubeadm kubectl kubernetes-cni
 \end{lstlisting}
 
 \noindent Kolejnym krokiem jest inicjalizacja głównego węzła klastra. \\
 
 \begin{lstlisting}
-kubeadm init --pod-network-cidr 10.244.0.0/16
+$ kubeadm init --pod-network-cidr 10.244.0.0/16
 \end{lstlisting}
 
 Ze względu na pobieranie dość dużej ilości proces ten może potrwać kilkanaście minut. Po zakończeniu uruchamiania należy zapisać sobie polecenie służące do dołączania dodatkowych węzłów do klastra. Poniżej możemy zobaczyć przykładowe polecenie. Token zostaje automatycznie wygenerowany i wygasa po określonym czasie.
 
 \begin{lstlisting}
-kubeadm join --token 312a65.2cc5af081672daa6 192.168.0.100:6443
+$ kubeadm join --token 312a65.2cc5af081672daa6 192.168.0.100:6443
 \end{lstlisting}
 
 Następnie ustawiamy narzędzie \textit{kubectl}, aby komunikowało się z naszym klastrem.
 
 \begin{lstlisting}
-mkdir /home/pirate/.kube
-sudo cp /etc/kubernetes/admin.conf /home/pirate/.kube/config
-sudo chown -R pirate /home/pirate/.kube
+$ mkdir /home/pirate/.kube
+$ sudo cp /etc/kubernetes/admin.conf /home/pirate/.kube/config
+$ sudo chown -R pirate /home/pirate/.kube
 \end{lstlisting}
 
 Następnie już jako użytkownik \textit{pirate} możemy sprawdzić stan klastra.
 
 \begin{lstlisting}
-kubectl get node
+$ kubectl get node
 NAME          STATUS     AGE       VERSION
 kube-master   NotReady   11m       v1.6.1
 \end{lstlisting}
@@ -669,14 +669,21 @@ kube-master   NotReady   11m       v1.6.1
 Domyślnie główny węzeł klastra jest zablokowany i niemożliwe jest uruchamianie na nim aplikacji. Należy usunąć tą blokadę następującym poleceniem:
 
 \begin{lstlisting}
-kubectl taint nodes --all node-role.kubernetes.io/master-
+$ kubectl taint nodes --all node-role.kubernetes.io/master-
 \end{lstlisting}
 
-Ostatnim krokiem jest uruchomienie zarządcy sieci, czyli \textit{flannela} w celu umożliwienia komunikacji między aplikacjami w klastrze.
+Kolejnym krokiem jest uruchomienie zarządcy sieci, czyli \textit{flannela} w celu umożliwienia komunikacji między aplikacjami w klastrze. Dzięki wykorzystaniu zalet Kubernetesa i stworzeniu \textit{Daemon Seta} na każdym węźle klastra automatycznie zostanie uruchomiona ta aplikacja.
 
 \begin{lstlisting}
-kubectl create -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel-rbac.yml
-kubectl create --namespace kube-system -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+$ kubectl create -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel-rbac.yml
+$ kubectl create -n kube-system -f https://raw.githubusercontent.com/floreks/KubePi/master/config/flannel-ds-arm.yaml
+\end{lstlisting}
+
+Ostatnim krokiem będzie uruchomione Dashboardu w celu ułatwienia zarządzania klastrem oraz oznaczenie węzła odpowiednią etykietą dzięki czemu możliwe będzie uruchamianie aplikacji na wybranych przez nas węzłach.
+
+\begin{lstlisting}
+$ kubectl label nodes kube-master target=master
+node "kube-master" labeled
 \end{lstlisting}
 
 %   kubeadm join --token 312a65.2cc5af081672daa6 192.168.0.100:6443
