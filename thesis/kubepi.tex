@@ -574,7 +574,7 @@ Ostatnie zdjęcie pokazuje podłączenie matrycy LED mającej za zadanie wyświe
 \FloatBarrier	
 \subsection{Przygotowanie i konfiguracja Raspberry Pi}
 \subsubsection{Instalacja systemu}
-Pierwszym krokiem będzie zainstalowanie systemu HypriotOS. W tym celu należy ściągnąć i wypakować obraz systemu z oficjalnej strony: \textit{https://blog.hypriot.com/downloads/}. Dla potrzeb pracy użyty został system w wersji \textit{1.1.0} jednak nowsze obrazy również powinny działać. W wersji 1.1.0 występuje problem z interfejsem \textit{1-Wire}, który trzeba ręcznie naprawić po instalacji. 
+Pierwszym krokiem będzie zainstalowanie systemu HypriotOS. W tym celu należy ściągnąć i wypakować obraz systemu z oficjalnej strony: \textit{https://blog.hypriot.com/downloads/}. Dla potrzeb pracy użyty został system w wersji \textit{1.1.3} jednak nowsze obrazy również powinny działać. W wersji 1.1.3 występuje problem z interfejsem \textit{1-Wire}, który trzeba ręcznie naprawić po instalacji. Możliwe, że w nowszych wersjach problem ten jest również obecny.
 
 Następnym krokiem będzie instalacja obrazu na karcie SD. Bardzo dobrym programem, który dostępny jest na większość systemów jest Etcher dostępny pod adresem: \textit{https://blog.hypriot.com/downloads/}.
 
@@ -621,8 +621,7 @@ dtoverlay=w1-gpio
 Następnie należy uruchomić ponownie urządzenie. Jeśli w folderze \textit{/sys/bus} nie pojawi się folder \textit{w1} oznacza to, że najprawdopodobniej w tej wersji systemu również występuje błąd z ładowaniem sterownika interfejsu \textit{1-wire}. Aby go naprawić należy wykonać następującą komendę i ponownie uruchomić system.
 
 \begin{lstlisting}
-sudo mv /boot/overlays/w1-gpio.dtbo \
-	/boot/overlays/w1-gpio.dtb
+sudo mv /boot/overlays/w1-gpio.dtbo	/boot/overlays/w1-gpio.dtb
 \end{lstlisting}
 
 \subsection{Instalacja i konfiguracja Kubernetesa}
@@ -632,8 +631,8 @@ W celu zainstalowania Kubernetesa skorzystamy z narzędzia o nazwie \textit{kube
 $ apt-get update && apt-get install -y apt-transport-https
 $ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 $ cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
-  deb http://apt.kubernetes.io/ kubernetes-xenial main
-  EOF
+deb http://apt.kubernetes.io/ kubernetes-xenial main
+EOF
 $ apt-get update
 $ apt-get install -y kubelet kubeadm kubectl kubernetes-cni
 \end{lstlisting}
@@ -679,18 +678,50 @@ $ kubectl create -f https://raw.githubusercontent.com/coreos/flannel/master/Docu
 $ kubectl create -n kube-system -f https://raw.githubusercontent.com/floreks/KubePi/master/config/flannel-ds-arm.yaml
 \end{lstlisting}
 
-Ostatnim krokiem będzie uruchomione Dashboardu w celu ułatwienia zarządzania klastrem oraz oznaczenie węzła odpowiednią etykietą dzięki czemu możliwe będzie uruchamianie aplikacji na wybranych przez nas węzłach.
+Ostatnim krokiem będzie uruchomione Dashboardu w celu ułatwienia zarządzania klastrem oraz oznaczenie węzła odpowiednią etykietą dzięki czemu możliwe będzie uruchamianie aplikacji na wybranych przez nas węzłach. 
 
 \begin{lstlisting}
 $ kubectl label nodes kube-master target=master
 node "kube-master" labeled
+$ curl -sSL https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml | sed "s/amd64/arm/g" | kubectl create -f -
+$  kubectl create -f https://raw.githubusercontent.com/floreks/KubePi/master/config/dashboard-arm.yaml
+
+# Czekamy na uruchomienie Dashboardu
+$ kubectl -n kube-system get pod
+NAME                                         READY     STATUS
+etcd-kube-master                             1/1       Running
+kube-apiserver-kube-master                   1/1       Running
+kube-controller-manager-kube-master          1/1       Running
+kube-dns-279829092-1fdp6                     3/3       Running
+kube-flannel-ds-2ngnl                        2/2       Running
+kube-proxy-2kx8h                             1/1       Running
+kube-scheduler-kube-master                   1/1       Running
+kubernetes-dashboard-head-2455883860-974t0   1/1       Running
+
+# Sprawdzamy port na ktorym wystawiony zostal Dashboard
+$ kubectl -n kube-system get service kubernetes-dashboard-head -o template --template="{{ (index .spec.ports 0).nodePort }}"
+31143
 \end{lstlisting}
 
-%   kubeadm join --token 312a65.2cc5af081672daa6 192.168.0.100:6443
+Od teraz możemy zarządzać naszym klastrem z poziomu przeglądarki, w naszym przypadku Dashboard dostępny jest pod adresem \textit{192.168.0.100:31143}.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\textwidth]{images/dashboard.png}
+	\caption{Zrzut ekranu z aplikacji Kubernetes Dashboard.}
+\end{figure}
+\FloatBarrier
+
+Po poprawnym skonfigurowaniu głównego węzła, należy skonfigurować dodatkowy węzeł. W naszym przypadku rolę tą pełnić będzie urządzenie Raspberry Pi 2. Ponownie wypalamy obraz systemu HypriotOS, uruchamiamy i podłączamy się używając protokołu SSH. Należy pamiętać o ustawieniu innej nazwy hosta w pliku \textit{device-init.yaml}. Na potrzeby pracy drugi węzeł nazwany został \textit{kube-node}. Na tej maszynie również należy zainstalować narzędzie \textit{kubeadm} w celu podłączenia węzła do klastra. Kiedy wszystko jest gotowe wykonujemy polecenie:
+
+\begin{lstlisting}
+$ kubeadm join --token 645058.48480ab896795f04 192.168.0.100:6443
+\end{lstlisting}
+
+% kubeadm join --token 645058.48480ab896795f04 192.168.0.100:6443
 
 
 \subsection{Projekt i konfiguracja aplikacji przykładowych}
-\section{Opis użytkowania}
 \section{Przykład użycia}
 \section{Możliwości rozszerzania aplikacji}
 \chapter{Podsumowanie}
