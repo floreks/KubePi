@@ -7,6 +7,7 @@
 \usepackage{txfonts}
 \usepackage{placeins}
 \usepackage{listings}
+\usepackage{listings-golang} 
 \usepackage{pdfpages}
 \usepackage{color}
 \usepackage{framed}
@@ -43,8 +44,7 @@
 
 \lstset{
     frame=single,
-    breaklines=true,
-    postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}
+    breaklines=true
 }
 
 \newcommand\YAMLcolonstyle{\color{red}\mdseries}
@@ -659,7 +659,7 @@ $ sudo chown -R pirate /home/pirate/.kube
 
 Następnie już jako użytkownik \textit{pirate} możemy sprawdzić stan klastra.
 
-\begin{lstlisting}
+\begin{lstlisting}[float,floatplacement=H]
 $ kubectl get node
 NAME          STATUS     AGE       VERSION
 kube-master   NotReady   11m       v1.6.1
@@ -680,7 +680,7 @@ $ kubectl create -n kube-system -f https://raw.githubusercontent.com/floreks/Kub
 
 Ostatnim krokiem będzie uruchomione Dashboardu w celu ułatwienia zarządzania klastrem oraz oznaczenie węzła odpowiednią etykietą dzięki czemu możliwe będzie uruchamianie aplikacji na wybranych przez nas węzłach. 
 
-\begin{lstlisting}
+\begin{lstlisting}[float,floatplacement=H]
 $ kubectl label nodes kube-master target=master
 node "kube-master" labeled
 $ curl -sSL https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml | sed "s/amd64/arm/g" | kubectl create -f -
@@ -718,11 +718,409 @@ Po poprawnym skonfigurowaniu głównego węzła, należy skonfigurować dodatkow
 $ kubeadm join --token 645058.48480ab896795f04 192.168.0.100:6443
 \end{lstlisting}
 
-% kubeadm join --token 645058.48480ab896795f04 192.168.0.100:6443
+Po chwili nasz węzeł powinien zostać skonfigurowany i dołączony do klastra. Z poziomu Dashboardu możemy sprawdzić jego status.
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\textwidth]{images/node_status.png}
+	\caption{Zrzut ekranu pokazujący status węzłów klastra.}
+\end{figure}
+\FloatBarrier
+
+Na koniec oznaczamy nowy węzeł odpowiednią etykietą w celu łatwiejszego zarządzania uruchamianiem aplikacji na konkretnych węzłach.
+
+\begin{lstlisting}
+$ kubectl label nodes kube-node target=node-1
+node "kube-node" labeled
+\end{lstlisting}
 
 \subsection{Projekt i konfiguracja aplikacji przykładowych}
-\section{Przykład użycia}
+W tej sekcji zapoznamy się ze stworzonymi aplikacjami monitorującymi otoczenie. Zwrócimy uwagę na kluczowe elementy implementacji oraz sposób konfiguracji i dystrybucji, który ma na celu uproszczenia procesu uruchamiania aplikacji w klastrze.
+
+\subsubsection{Monitoring Server}
+Pierwsza aplikacja pełni rolę serwera do monitorowania temperatury i wilgotności. Pozwala na odczyt pomiarów z opisanych wcześniej sensorów DHT11 oraz DS18B20. \\ \\
+Poniższy listing przestawia konfigurację całej aplikacji. Dzięki użyciu biblioteki \textit{restful-go} w prosty sposób można stworzyć serwer bazujący na architekturze REST.
+\begin{lstlisting}[language=golang]
+var (
+	argPort = pflag.Int("port", 3000, "The port to listen on for incoming HTTP requests")
+)
+
+func main() {
+	...
+	// Parse command line arguments
+	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
+	pflag.Parse()
+
+	// Register handler
+	restful.Add(dht.NewDHT11Service().Handler())
+	restful.Add(ds18b20.NewDS18B20Service().Handler())
+
+	log.Printf("Listening on port: %d", *argPort)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *argPort), nil))
+\end{lstlisting}
+
+% TODO
+\begin{lstlisting}[language=golang,float,floatplacement=H]
+func (d DHT11Service) Handler() *restful.WebService {
+	ws := new(restful.WebService)
+	ws.
+		Path("/dht11").
+		Consumes(restful.MIME_JSON).
+		Produces(restful.MIME_JSON)
+
+	ws.Route(ws.GET("/").To(d.readFromSensor).
+		Doc("Reads temperature and humidity from DHT11 sensor").
+		Writes(sensor.DHTResponse{}))
+	...
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=golang,float,floatplacement=H]
+func (DHT11Reader) ReadFromSensor() (*DHTResponse, error) {
+	log.Printf("Reading from sensor %s on GPIO pin %d", dht.DHT11, gpioPinOverride)
+	temp, humidity, _, err := dht.ReadDHTxxWithRetry(dht.DHT11, gpioPinOverride, BOOST_PERF_FLAG,
+		RETRIES)
+	if err != nil {
+		if strings.Contains(err.Error(), "C.dial_DHTxx_and_read") {
+			return nil, fmt.Errorf("Could not read from sensor.")
+		}
+
+		return nil, err
+	}
+
+	return &DHTResponse{DHTTemperature{Temperature: temp}, DHTHumidity{Humidity: humidity}}, nil
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=golang,float,floatplacement=H]
+type DHTResponse struct {
+	DHTTemperature
+	DHTHumidity
+}
+
+type DHTTemperature struct {
+	// Temperature
+	Temperature float32 `json:"temperature"`
+}
+
+type DHTHumidity struct {
+	// Humidity
+	Humidity float32 `json:"humidity"`
+}
+
+type DHTReader interface {
+	ReadFromSensor() (*DHTResponse, error)
+	ReadTemperature() (*DHTTemperature, error)
+	ReadHumidity() (*DHTHumidity, error)
+	SetGPIO(int)
+	ResetGPIO()
+}
+\end{lstlisting}
+
+\subsubsection{Breathalyzer}
+
+\begin{lstlisting}
+func (d MQ3Service) Handler() *restful.WebService {
+	ws := new(restful.WebService)
+	ws.
+		Path("/mq3").
+		Consumes(restful.MIME_JSON).
+		Produces(restful.MIME_JSON)
+
+	ws.Route(ws.GET("/measure").To(d.detectAlcohol).
+		Doc("Reads temperature from DS18B20 sensor").
+		Writes(sensor.MQ3Response{}))
+
+	return ws
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=golang,float,floatplacement=H]
+// DetectAlcohol reads for 5 sec digital out from mq-3 sensor and returns true or false based on readings over time
+func (this MQ3Reader) DetectAlcohol() MQ3Response {
+	timeoutChan := time.NewTimer(this.detectionTimeout).C
+	intervalChan := time.NewTicker(this.detectionInterval).C
+	var result int
+	tmp := 1.0
+	readings := this.detectionTimeout.Seconds() / this.detectionInterval.Seconds()
+
+	pin := rpi.Pin(this.gpioPin)
+
+	// Set input mode to read from the pin
+	pin.Input()
+
+	for {
+		select {
+		case <-timeoutChan:
+			tmp = tmp / float64(readings)
+			result = int(tmp + 0.5)
+
+			if result == 0 {
+				return MQ3Response{AlcoholDetected: false}
+			}
+
+			return MQ3Response{AlcoholDetected: true}
+		case <-intervalChan:
+			out := pin.Read()
+			if out == rpi.Low {
+				tmp += 1.0
+			}
+		}
+	}
+}
+\end{lstlisting}
+
+\subsubsection{Wyświetlacz temperatury}
+
+\begin{lstlisting}
+var (
+	pollServer = pflag.String("poll-server", "", "Server address that should be used for polling data")
+)
+
+func main() {
+	...
+	dev, err := device.NewMax7219()
+	if err != nil {
+		log.Printf("Error during device creation: %s", err.Error())
+		os.Exit(1)
+	}
+
+	err = dev.Init()
+	if err != nil {
+		log.Printf("Error during device init: %s", err.Error())
+		os.Exit(1)
+	}
+
+	defer dev.Close()
+
+	tempChan := make(chan float32)
+	go pollTemperature(pollServer, tempChan)
+
+	registerSigtermHandler(dev)
+
+	for temp := range tempChan {
+		err := dev.DisplayTemperature(temp)
+		if err != nil {
+			...
+		}
+	}
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=golang,float,floatplacement=H]
+func pollTemperature(pollServer *string, tempChan chan float32) {
+	tempResponse := new(TempResponse)
+
+	for {
+		r, err := http.Get(*pollServer)
+		if err != nil {
+			log.Printf("Error durring temperature polling: %s", err.Error())
+			os.Exit(1)
+		}
+
+		err = json.NewDecoder(r.Body).Decode(tempResponse)
+		if err != nil {
+			log.Printf("Error during server response decoding: %s", err.Error())
+			os.Exit(1)
+		}
+
+		tempChan <- tempResponse.Temperature
+		time.Sleep(POLLING_TIME)
+		r.Body.Close()
+	}
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=golang,float,floatplacement=H]
+func (this Max7219) DisplayTemperature(temperature float32) error {
+	// Round to integer number as we don't have space for floating point numbers
+	temp := int(temperature)
+
+	buf, err := DEFAULT_FONT.FromInt(temp)
+	if err != nil {
+		return err
+	}
+
+	for i := 0; i < MAX7219_DIGIT_COUNT; i++ {
+		err := this.send(Max7219Reg(i), buf[1][i], buf[0][i])
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+\end{lstlisting}
+
+\subsubsection{KubePi Monitor}
+
+\begin{lstlisting}
+  runPollInterval(fetchFn, address, timeout = 3000, immediate = true) {
+    let intervalId = setInterval(() => {
+      this.props.dispatch(fetchFn(address))
+    }, timeout, true)
+
+    if(immediate) {
+      this.props.dispatch(fetchFn(address))
+    }
+
+    return intervalId
+  }
+\end{lstlisting}
+
+\begin{lstlisting}
+  handleDHT11() {
+    if(this.state.dhtIntervalId === 0) {
+      let intervalId = this.runPollInterval(dht11.fetchData, '/dht11')
+      this.setState({
+        dhtIntervalId: intervalId,
+      })
+    } else {
+      clearInterval(this.state.dhtIntervalId)
+      this.props.dispatch(dht11.reset())
+      this.setState({
+        dhtIntervalId: 0,
+      })
+    }
+  }
+\end{lstlisting}
+
+\begin{lstlisting}[language=golang,float,floatplacement=H]
+func dht11Handler(w http.ResponseWriter, r *http.Request) {
+	dht11Response := new(DHT11Response)
+
+	resp, err := http.Get("http://dht-server.default.svc.cluster.local:3000/dht11")
+	if err != nil {
+		fmt.Fprintf(w, "Error durring temperature polling: %s", err.Error())
+		return
+	}
+
+	err = json.NewDecoder(resp.Body).Decode(dht11Response)
+	if err != nil {
+		fmt.Fprintf(w, "Error during server response decoding: %s", err.Error())
+		return
+	}
+
+	log.Println(dht11Response)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(dht11Response)
+}
+\end{lstlisting}
+
+\subsubsection{Budowanie i dystrybucja}
+\begin{lstlisting}
+GO := $(shell command -v go 2> /dev/null)
+XGO := $(shell command -v xgo 2> /dev/null)
+
+prepare:
+	@mkdir build
+
+all: prepare x86 arm
+
+x86: prepare
+ifndef GO
+	$(error "Could not find GO compiler.")
+endif
+	@go build
+	@mv dht* build/
+
+arm: prepare
+ifndef XGO
+	$(error "Could not find XGO compiler.")
+endif
+	@xgo -targets linux/arm-6 .
+	@mv dht* build/
+
+clean:
+	@sudo rm -rf build
+\end{lstlisting}
+
+\begin{lstlisting}[float,floatplacement=H]
+FROM floreks/kubepi-base
+
+COPY build/dht-server-linux-arm-6 /usr/bin/dht-server
+
+ENTRYPOINT ["/usr/bin/dht-server"]
+
+EXPOSE 3000
+\end{lstlisting}
+
+\subsubsection{Uruchamianie w klastrze}
+
+\begin{lstlisting}
+kind: List
+apiVersion: v1
+items:
+- kind: Deployment
+  apiVersion: extensions/v1beta1
+  metadata:
+    labels:
+      app: dht-server
+    name: dht-server
+    namespace: default
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: dht-server
+    template:
+      metadata:
+        labels:
+          app: dht-server
+      spec:
+        nodeSelector:
+          target: master
+        containers:
+          - name: dht-server
+            securityContext:
+              privileged: true
+            image: floreks/dht-server
+            imagePullPolicy: Always
+            ports:
+              - containerPort: 3000
+                protocol: TCP
+              ...
+\end{lstlisting}
+
+\begin{lstlisting}[float,floatplacement=H]             
+...
+            volumeMounts:
+              - mountPath: /sys/class/gpio
+                name:      sys-class-gpio
+              - mountPath: /sys/devices
+                name:      sys-devices
+              - mountPath: /sys/bus
+                name:      sys-bus
+            args:
+              # Uncomment this if you want to change port
+              # - --port=3001
+        volumes:
+          - name:     sys-class-gpio
+            hostPath:
+              path:   /sys/class/gpio
+          - name:     sys-devices
+            hostPath:
+              path:   /sys/devices
+          - name:     sys-bus
+            hostPath:
+              path:   /sys/bus
+- kind: Service
+  apiVersion: v1
+  metadata:
+    labels:
+      app: dht-server
+    name: dht-server
+    namespace: default
+  spec:
+    type: NodePort
+    ports:
+    - port: 3000
+      targetPort: 3000
+    selector:
+      app: dht-server
+\end{lstlisting}
+
+\section{Opis użycia}
 \section{Możliwości rozszerzania aplikacji}
 \chapter{Podsumowanie}
 
