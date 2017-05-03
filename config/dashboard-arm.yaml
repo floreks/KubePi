@@ -42,7 +42,7 @@ spec:
         target: master
       containers:
       - name: kubernetes-dashboard-head
-        image: kubernetesdashboarddev/kubernetes-dashboard-arm:head
+        image: gcr.io/google_containers/kubernetes-dashboard-arm:v1.6.0
         imagePullPolicy: Always
         ports:
         - containerPort: 9090

@@ -10,6 +10,7 @@
 \usepackage{listings-golang} 
 \usepackage{pdfpages}
 \usepackage{color}
+\usepackage{xcolor}
 \usepackage{framed}
 \usepackage{filecontents}
 \usepackage{caption}
@@ -17,6 +18,11 @@
 \usepackage{textcomp}
 
 \usepackage[polish]{babel}
+
+\usepackage{caption}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{gray}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
 
 \let\Oldsection\section
 \renewcommand{\section}{\FloatBarrier\Oldsection}
@@ -43,8 +49,9 @@
 \newtheorem{cloudcomputing}{Chmura obliczeniowa}
 
 \lstset{
-    frame=single,
-    breaklines=true
+%    frame=single,
+    breaklines=true,
+    backgroundcolor=\color{gray!10},
 }
 
 \newcommand\YAMLcolonstyle{\color{red}\mdseries}
@@ -739,8 +746,8 @@ W tej sekcji zapoznamy się ze stworzonymi aplikacjami monitorującymi otoczenie
 
 \subsubsection{Monitoring Server}
 Pierwsza aplikacja pełni rolę serwera do monitorowania temperatury i wilgotności. Pozwala na odczyt pomiarów z opisanych wcześniej sensorów DHT11 oraz DS18B20. \\ \\
-Poniższy listing przestawia konfigurację całej aplikacji. Dzięki użyciu biblioteki \textit{restful-go} w prosty sposób można stworzyć serwer bazujący na architekturze REST.
-\begin{lstlisting}[language=golang]
+Listing~\ref{lst:dht-config} przestawia konfigurację całej aplikacji. Dzięki użyciu biblioteki \textit{restful-go} w prosty sposób można stworzyć serwer bazujący na architekturze REST.
+\begin{lstlisting}[language=golang,caption=Konfiguracja aplikacji,label=lst:dht-config]
 var (
 	argPort = pflag.Int("port", 3000, "The port to listen on for incoming HTTP requests")
 )
@@ -759,8 +766,8 @@ func main() {
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *argPort), nil))
 \end{lstlisting}
 
-% TODO
-\begin{lstlisting}[language=golang,float,floatplacement=H]
+\noindent Listing~\ref{lst:dht-api} przedstawia rejestrowanie odpowiednich podstron, które pozwolą na wykonanie kodu poprzez przejście na odpowiedni adres w przeglądarce. W tym wypadku rejestrujemy podstronę \textit{"/dht11"}, która zwróci nam odczyt z sensora w formacie \textit{JSON}.
+\begin{lstlisting}[language=golang,caption=Konfiguracja API,label=lst:dht-api]
 func (d DHT11Service) Handler() *restful.WebService {
 	ws := new(restful.WebService)
 	ws.
@@ -771,28 +778,23 @@ func (d DHT11Service) Handler() *restful.WebService {
 	ws.Route(ws.GET("/").To(d.readFromSensor).
 		Doc("Reads temperature and humidity from DHT11 sensor").
 		Writes(sensor.DHTResponse{}))
-	...
-}
 \end{lstlisting}
 
-\begin{lstlisting}[language=golang,float,floatplacement=H]
-func (DHT11Reader) ReadFromSensor() (*DHTResponse, error) {
-	log.Printf("Reading from sensor %s on GPIO pin %d", dht.DHT11, gpioPinOverride)
-	temp, humidity, _, err := dht.ReadDHTxxWithRetry(dht.DHT11, gpioPinOverride, BOOST_PERF_FLAG,
-		RETRIES)
+\noindent Na listingu~\ref{lst:dht-apicall} widzimy kod, który zostaje wykonany po przejściu na podstronę \textit{"/dht11"}. Odczyt danych z sensora zostaje oddelegowany do osobnego interfejsu, a w tej części następuje jedynie obsługa błędów i zwrócenie wyniku.
+\begin{lstlisting}[language=golang,caption=Wywołanie kodu API,label=lst:dht-apicall]
+func (d DHT11Service) readFromSensor(request *restful.Request, response *restful.Response) {
+	result, err := d.reader.ReadFromSensor()
 	if err != nil {
-		if strings.Contains(err.Error(), "C.dial_DHTxx_and_read") {
-			return nil, fmt.Errorf("Could not read from sensor.")
-		}
-
-		return nil, err
+		service.HandleInternalServerError(response, err)
+		return
 	}
 
-	return &DHTResponse{DHTTemperature{Temperature: temp}, DHTHumidity{Humidity: humidity}}, nil
+	response.WriteHeaderAndEntity(http.StatusOK, result)
 }
 \end{lstlisting}
 
-\begin{lstlisting}[language=golang,float,floatplacement=H]
+\noindent Listing~\ref{lst:dht-struct} pokazuje struktury, które zostały zdefiniowane w celu lepszego podziału danych zwracanych przez sensor \textit{DHT11}. \textit{DHTResponse} jest strukturą zwracaną bezpośrednio przez serwer i składa się z temperatury oraz wilgotności. Dodatkowy podział został wprowadzony ze względu na dodanie opcji odczytu pojedynczych wartości temperatury lub wilgotności. Interfejs \textit{DHTReader} natomiast posiada odpowiednie metody do odczytu danych z sensora. Implementacja metod dla sensora \textit{DHT11} znajduję się w osobnym pliku. Dzięki wykorzystaniu interfejsu możliwe jest użycie tych samych struktur do odczytu danych z podobnych sensorów.
+\begin{lstlisting}[language=golang,caption=Struktury odpowiedzi serwera,label=lst:dht-struct]
 type DHTResponse struct {
 	DHTTemperature
 	DHTHumidity
@@ -817,9 +819,31 @@ type DHTReader interface {
 }
 \end{lstlisting}
 
-\subsubsection{Breathalyzer}
+\noindent Ostatni listing~\ref{lst:dht-read} przedstawia wykorzystanie biblioteki \textit{go-dht} i bezpośredni odczyt wartości sensora \textit{DHT11} z domyślnie ustawionego 17 pinu GPIO.
+\begin{lstlisting}[language=golang,caption=Odczyt danych z sensora DHT11,label=lst:dht-read]
+func (DHT11Reader) ReadFromSensor() (*DHTResponse, error) {
+	log.Printf("Reading from sensor %s on GPIO pin %d", dht.DHT11, gpioPinOverride)
+	temp, humidity, _, err := dht.ReadDHTxxWithRetry(dht.DHT11, gpioPinOverride, BOOST_PERF_FLAG,
+		RETRIES)
+	if err != nil {
+		if strings.Contains(err.Error(), "C.dial_DHTxx_and_read") {
+			return nil, fmt.Errorf("Could not read from sensor.")
+		}
 
-\begin{lstlisting}
+		return nil, err
+	}
+
+	return &DHTResponse{DHTTemperature{Temperature: temp}, DHTHumidity{Humidity: humidity}}, nil
+}
+\end{lstlisting}
+
+\noindent Aplikacja posiada również opcję nadpisania numeru pinu GPIO, z którego należy odczytać dane. Możliwe jest to dzięki wywołaniu operacji \textit{POST} na podstronie o adresie \textit{"/dht11"} i przesłąnie parametru \textit{gpio=x}, gdzie \textit{x} to numer pinu GPIO z którego chcemy odczytywać dane.
+
+\subsubsection{Breathalyzer}
+Kolejna aplikacja ma za zadanie wykrywanie alkoholu w powietrzu. Po uruchomieniu mierzy przez 5 sekund zawartość alkoholu, następnie uśrednia wynik i informuje użytkownika czy alkohol został wykryty czy nie. Nie posiada ona funkcji dokładnego pomiaru stężenia alkoholu, a jedynie informuje o jego obecności. \\
+
+\noindent Listing~\ref{lst:breathalyzer-api} podobnie do listingu~\ref{lst:dht-api} przedstawia budowanie API naszej aplikacji. Przejście na postronę \textit{"/mq3/measure"} uruchamia pomiar.
+\begin{lstlisting}[language=golang,caption=Konfiguracja API,label=lst:breathalyzer-api]
 func (d MQ3Service) Handler() *restful.WebService {
 	ws := new(restful.WebService)
 	ws.
@@ -835,7 +859,8 @@ func (d MQ3Service) Handler() *restful.WebService {
 }
 \end{lstlisting}
 
-\begin{lstlisting}[language=golang,float,floatplacement=H]
+\noindent Listing~\ref{lst:breathalyzer-run} pokazuje główną metodę całej aplikacji, której zadaniem jest sprawdzenie obecności alkoholu w powietrzu. Pomiar odbywa się w 5-sekundowym przedziale czasowym z częstotliwością 10 odczytów na sekundę, co pozwala na uzyskanie 50 próbek danych. Dane te są następnie uśredniane, a wykrycie alkoholu sygnalizowane w przypadku jeśli czujnik pozostawał w stanie niskim co najmniej przez połowę okresu próbkowania.
+\begin{lstlisting}[language=golang,caption=Pomiar alkoholu w powietrzu,label=lst:breathalyzer-run]
 // DetectAlcohol reads for 5 sec digital out from mq-3 sensor and returns true or false based on readings over time
 func (this MQ3Reader) DetectAlcohol() MQ3Response {
 	timeoutChan := time.NewTimer(this.detectionTimeout).C
@@ -843,9 +868,7 @@ func (this MQ3Reader) DetectAlcohol() MQ3Response {
 	var result int
 	tmp := 1.0
 	readings := this.detectionTimeout.Seconds() / this.detectionInterval.Seconds()
-
 	pin := rpi.Pin(this.gpioPin)
-
 	// Set input mode to read from the pin
 	pin.Input()
 
@@ -870,21 +893,20 @@ func (this MQ3Reader) DetectAlcohol() MQ3Response {
 }
 \end{lstlisting}
 
+\newpage
 \subsubsection{Wyświetlacz temperatury}
 
-\begin{lstlisting}
+\begin{lstlisting}[language=golang,caption=Konfiguracja aplikacji,label=lst:led-config]
 var (
 	pollServer = pflag.String("poll-server", "", "Server address that should be used for polling data")
 )
 
 func main() {
-	...
 	dev, err := device.NewMax7219()
 	if err != nil {
 		log.Printf("Error during device creation: %s", err.Error())
 		os.Exit(1)
 	}
-
 	err = dev.Init()
 	if err != nil {
 		log.Printf("Error during device init: %s", err.Error())
@@ -892,10 +914,10 @@ func main() {
 	}
 
 	defer dev.Close()
-
+	
 	tempChan := make(chan float32)
 	go pollTemperature(pollServer, tempChan)
-
+	
 	registerSigtermHandler(dev)
 
 	for temp := range tempChan {
@@ -907,7 +929,7 @@ func main() {
 }
 \end{lstlisting}
 
-\begin{lstlisting}[language=golang,float,floatplacement=H]
+\begin{lstlisting}[language=golang,caption=Odczyt temperatury z serwera,label=lst:led-temp-read]
 func pollTemperature(pollServer *string, tempChan chan float32) {
 	tempResponse := new(TempResponse)
 
@@ -931,7 +953,7 @@ func pollTemperature(pollServer *string, tempChan chan float32) {
 }
 \end{lstlisting}
 
-\begin{lstlisting}[language=golang,float,floatplacement=H]
+\begin{lstlisting}[language=golang,caption=Wyświetlanie temperatury,label=lst:led-display]
 func (this Max7219) DisplayTemperature(temperature float32) error {
 	// Round to integer number as we don't have space for floating point numbers
 	temp := int(temperature)
@@ -952,9 +974,10 @@ func (this Max7219) DisplayTemperature(temperature float32) error {
 }
 \end{lstlisting}
 
+\newpage
 \subsubsection{KubePi Monitor}
 
-\begin{lstlisting}
+\begin{lstlisting}[language=golang,caption=Startowanie wątków do odczytu danych,label=lst:kubepi-fetch]
   runPollInterval(fetchFn, address, timeout = 3000, immediate = true) {
     let intervalId = setInterval(() => {
       this.props.dispatch(fetchFn(address))
@@ -968,7 +991,7 @@ func (this Max7219) DisplayTemperature(temperature float32) error {
   }
 \end{lstlisting}
 
-\begin{lstlisting}
+\begin{lstlisting}[language=golang,caption=Startowanie wątku odpytującego nasz serwer o dane z sensora DHT11,label=lst:kubepi-dht-read]
   handleDHT11() {
     if(this.state.dhtIntervalId === 0) {
       let intervalId = this.runPollInterval(dht11.fetchData, '/dht11')
@@ -985,7 +1008,7 @@ func (this Max7219) DisplayTemperature(temperature float32) error {
   }
 \end{lstlisting}
 
-\begin{lstlisting}[language=golang,float,floatplacement=H]
+\begin{lstlisting}[language=golang,caption=Odczyt temperatury z naszego serwera,label=lst:kubepi-dht-go-read]
 func dht11Handler(w http.ResponseWriter, r *http.Request) {
 	dht11Response := new(DHT11Response)
 
@@ -1007,8 +1030,9 @@ func dht11Handler(w http.ResponseWriter, r *http.Request) {
 }
 \end{lstlisting}
 
+\newpage
 \subsubsection{Budowanie i dystrybucja}
-\begin{lstlisting}
+\begin{lstlisting}[caption=Plik do budowania aplikacji w architekturze X86/AMD64 i ARM,label=lst:compiling]
 GO := $(shell command -v go 2> /dev/null)
 XGO := $(shell command -v xgo 2> /dev/null)
 
@@ -1035,19 +1059,20 @@ clean:
 	@sudo rm -rf build
 \end{lstlisting}
 
-\begin{lstlisting}[float,floatplacement=H]
+\begin{lstlisting}[caption=Przykładowy plik Dockera dla aplikacji webowej,label=lst:dockerfile]
 FROM floreks/kubepi-base
 
-COPY build/dht-server-linux-arm-6 /usr/bin/dht-server
+ADD build /
 
-ENTRYPOINT ["/usr/bin/dht-server"]
+ENTRYPOINT ["/kubepi-monitor-linux-arm-6"]
 
-EXPOSE 3000
+EXPOSE 80
 \end{lstlisting}
 
+\newpage
 \subsubsection{Uruchamianie w klastrze}
 
-\begin{lstlisting}
+\begin{lstlisting}[language=yaml,caption=Definicja aplikacji uruchamianej w klastrze 1,label=lst:yaml-start]
 kind: List
 apiVersion: v1
 items:
@@ -1082,7 +1107,7 @@ items:
               ...
 \end{lstlisting}
 
-\begin{lstlisting}[float,floatplacement=H]             
+\begin{lstlisting}[language=yaml,caption=Definicja aplikacji uruchamianej w klastrze 2,label=lst:yaml-end,float]             
 ...
             volumeMounts:
               - mountPath: /sys/class/gpio
