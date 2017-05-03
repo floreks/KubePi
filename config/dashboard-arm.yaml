@@ -39,7 +39,7 @@ spec:
         app: kubernetes-dashboard-head
     spec:
       nodeSelector:
-        target: master
+        target: node-1
       containers:
       - name: kubernetes-dashboard-head
         image: gcr.io/google_containers/kubernetes-dashboard-arm:v1.6.0
