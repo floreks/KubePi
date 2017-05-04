@@ -425,13 +425,17 @@ Resin jest rozwiązaniem przygotowanym w celu przeniesienia zalet kontenerów na
 Jednak pomimo wielu zalet, nie jest on na tyle zaawansowany i bezpieczny w porównaniu do Kubernetesa. Głównym ograniczeniem jest możliwość uruchomienia jedynie jednego kontenera aplikacji na każdym urządzeniu użytkownika. Grupowanie urządzeń oraz definiowanie zaawansowanych reguł sieciowych w celu ograniczenia komunikacji między urządzeniami również nie jest możliwe.
 
 \section{Mikrokontroler Raspberry Pi}
-Stworzona przez Raspberry Pi Foundation seria mikrokontrolerów Raspberry Pi miała swój początek w Wielkiej Brytanii, gdzie promowane były one jako idealne do nauki podstaw budowy i działania komputerów. Przez lata kolejne modele były ulepszane i obecnie są one używane w zagadnieniach Internetu Rzeczy, robotyce, inteligentnych domach i wielu innych dziedzinach. \\ \\
-Poniższa tabela prezentuje porównanie najpopularniejszych modeli Raspberry Pi, tj.: A, B, A+, B+, wersji drugiej modelu B oraz wersji trzeciej. W pracy zostaną użyte modele wersja druga B oraz najnowsza obecnie Raspberry Pi 3, w której znaczącej poprawie uległy taktowanie procesora oraz wielkość pamięci RAM. Dzięki temu może być ona stosowana jako główny węzeł klastra, kontrolujący pozostałe węzły.
+Stworzona przez Raspberry Pi Foundation seria mikrokontrolerów Raspberry Pi miała swój początek w Wielkiej Brytanii, gdzie promowane były one jako idealne do nauki podstaw budowy i działania komputerów. Przez lata kolejne modele były ulepszane i obecnie są one używane w zagadnieniach Internetu Rzeczy, robotyce, inteligentnych domach i wielu innych dziedzinach.
+
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.81\textwidth]{images/placeholder.png}
 	\caption{Mikrokontroler Raspberry Pi}
 \end{figure}
+
+\noindent Poniższa tabela prezentuje porównanie najpopularniejszych modeli Raspberry Pi, tj.: A, B, A+, B+, wersji drugiej modelu B oraz wersji trzeciej. W pracy zostały użyte dwa najnowsze obecnie Raspberry Pi 3, w których znaczącej poprawie uległy taktowanie procesora oraz wielkość pamięci RAM. Dzięki temu mogą być one stosowane jako główny węzeł klastra, kontrolujący pozostałe węzły.
+
+% TODO TABELA
 
 \subsection{Protokoły komunikacji}
 Poniżej opisane zostały protokoły komunikacji Raspberry Pi, użyte na potrzeby wykonania tej pracy. Protokół SPI użyty został do podłączenia wyświetlacza LED i wyświetlania aktualnej temperatury raportowanej przez czujniki. Jeden z czujników komunikuje się poprzez protokół 1-Wire, natomiast drugi komunikuje się bezpośrednio poprzez piny GPIO.
@@ -524,7 +528,7 @@ Do stworzenia aplikacji przykładowych użytych zostało kilka otwartoźródłow
 \subsubsection{Flannel}
 Jest menadżerem wirtualnej sieci, który umożliwia stworzenie wirtualnej podsieci dla każdego węzła w klastrze. W dużym uproszczeniu pozwala on na komunikację między aplikacjami znajdującymi się w kontenerach uruchomionych na różnych węzłach klastra, przy czym nie jest wymagane aby węzły klastra przebywały w tej samej podsieci. Dzięki takim narzędziom jak Flannel, zwanym \textit{Overlay Networks} możliwa jest komunikacja między aplikacjami uruchomionymi w rozproszonym klastrze.
 \subsubsection{Github}
-Dodatkowym narzędziem użytym w procesie tworzenia aplikacji był system kontroli wersji o nazwie GIT. Pozwalało to kontrolować cały proces powstawania Qubica. Całość jest zintegrowana z portalem Github i przechowywana na prywatnym repozytorium.
+Dodatkowym narzędziem użytym w procesie tworzenia aplikacji był system kontroli wersji o nazwie GIT. Pozwalało to kontrolować cały proces powstawania KubePi. Całość jest zintegrowana z portalem Github i przechowywana na prywatnym repozytorium [x]. %TODO.
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.81\textwidth]{images/placeholder.png}
@@ -690,7 +694,6 @@ Ostatnim krokiem będzie uruchomione Dashboardu w celu ułatwienia zarządzania 
 \begin{lstlisting}[float,floatplacement=H]
 $ kubectl label nodes kube-master target=master
 node "kube-master" labeled
-$ curl -sSL https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml | sed "s/amd64/arm/g" | kubectl create -f -
 $  kubectl create -f https://raw.githubusercontent.com/floreks/KubePi/master/config/dashboard-arm.yaml
 
 # Czekamy na uruchomienie Dashboardu
@@ -741,10 +744,10 @@ $ kubectl label nodes kube-node target=node-1
 node "kube-node" labeled
 \end{lstlisting}
 
-\subsection{Projekt i konfiguracja aplikacji przykładowych}
+\subsection{Projekt aplikacji przykładowych}
 W tej sekcji zapoznamy się ze stworzonymi aplikacjami monitorującymi otoczenie. Zwrócimy uwagę na kluczowe elementy implementacji oraz sposób konfiguracji i dystrybucji, który ma na celu uproszczenia procesu uruchamiania aplikacji w klastrze.
 
-\subsubsection{Monitoring Server}
+\subsubsection{Monitoring Server} \label{subsect:monitoring-server}
 Pierwsza aplikacja pełni rolę serwera do monitorowania temperatury i wilgotności. Pozwala na odczyt pomiarów z opisanych wcześniej sensorów DHT11 oraz DS18B20. \\ \\
 Listing~\ref{lst:dht-config} przestawia konfigurację całej aplikacji. Dzięki użyciu biblioteki \textit{restful-go} w prosty sposób można stworzyć serwer bazujący na architekturze REST.
 \begin{lstlisting}[language=golang,caption=Konfiguracja aplikacji,label=lst:dht-config]
@@ -895,31 +898,26 @@ func (this MQ3Reader) DetectAlcohol() MQ3Response {
 
 \newpage
 \subsubsection{Wyświetlacz temperatury}
+Zadaniem tej aplikacji jest okresowe pobieranie temperatury poprzez odpytywanie stworzonego wcześniej serwera monitorującego oraz wyświetlanie jej na matrycy LED MAX7219. \\
 
+\noindent Listing~\ref{lst:led-config} przedstawia konfigurację aplikacji. Aplikacja przyjmuje jako parametr adres serwera, z którego pobiera potrzebne dane. W dalszym kroku następuje konfiguracja wyświetlacza oraz startowany jest wątek odpytujący serwer. Komunikacja między wątkami odbywa się poprzez kanały, które są podstawowymi mechanizmami komunikacji między wątkami w języku Go. Po odczytaniu danych z serwera są one zapisywane do kanału \textit{tempChan}, a następnie główny wątek pobiera te dane i wyświetla temperaturę.
 \begin{lstlisting}[language=golang,caption=Konfiguracja aplikacji,label=lst:led-config]
-var (
-	pollServer = pflag.String("poll-server", "", "Server address that should be used for polling data")
-)
-
 func main() {
 	dev, err := device.NewMax7219()
 	if err != nil {
-		log.Printf("Error during device creation: %s", err.Error())
-		os.Exit(1)
+		...
 	}
 	err = dev.Init()
 	if err != nil {
-		log.Printf("Error during device init: %s", err.Error())
-		os.Exit(1)
+		...
 	}
 
 	defer dev.Close()
-	
 	tempChan := make(chan float32)
-	go pollTemperature(pollServer, tempChan)
 	
+	go pollTemperature(pollServer, tempChan)
 	registerSigtermHandler(dev)
-
+	
 	for temp := range tempChan {
 		err := dev.DisplayTemperature(temp)
 		if err != nil {
@@ -929,6 +927,8 @@ func main() {
 }
 \end{lstlisting}
 
+\newpage
+\noindent Następny listing~\ref{lst:led-temp-read} przedstawia proces pobierania temperatury z serwera i zapisywania do struktury \textit{TempResponse}. Co pewien okres czasu, zdefiniowany w zmiennej \textit{POLLING\_TIME} dane pobierane są z serwera. Następnie są one dekodowane do struktury \textit{TempResponse}, która zawiera tylko jedno pole \textit{Temperature}. Po poprawnym zdekodowaniu struktury jest ona przesyłana do kanału \textit{tempChan}, który służy do synchronizacji z głównym wątkiem aplikacji.
 \begin{lstlisting}[language=golang,caption=Odczyt temperatury z serwera,label=lst:led-temp-read]
 func pollTemperature(pollServer *string, tempChan chan float32) {
 	tempResponse := new(TempResponse)
@@ -953,6 +953,8 @@ func pollTemperature(pollServer *string, tempChan chan float32) {
 }
 \end{lstlisting}
 
+\newpage
+\noindent Ostatnim i najważniejszym krokiem jest wyświetlenie temperatury, co przedstawia kod w listingu~\ref{lst:led-display}. Temperatura zostaje rzutowana na liczbę całkowitą, ze względu na brak miejsca na wyświetlaczu. Następnie liczba ta konwertowana jest na odpowiednią tablicę bajtów o rozmiarze 2x8. Każdy wiersza reprezentuję cyfrę, która wyświetlana jest na obszarze 8x8. Każda kolumna reprezentuje natomiast pojedynczy wiersz 8 diód na matrycy. Przykładowo wpisanie cyfry 2 (binarnie 00000010) do rejestru 0 spowoduje podświetlenie przedostatniej diody w pierwszym wierszu matrycy LED.
 \begin{lstlisting}[language=golang,caption=Wyświetlanie temperatury,label=lst:led-display]
 func (this Max7219) DisplayTemperature(temperature float32) error {
 	// Round to integer number as we don't have space for floating point numbers
@@ -975,8 +977,10 @@ func (this Max7219) DisplayTemperature(temperature float32) error {
 \end{lstlisting}
 
 \newpage
-\subsubsection{KubePi Monitor}
+\subsubsection{KubePi Monitor} \label{subsect:kubepi-monitor}
+Ostatnia aplikacja jest aplikacją webową i pozwala na monitorowanie odczytów sensorów z poziomu przeglądarki. Podobnie do poprzedniej aplikacji pobiera okresowo dane z serwera monitorującego i wyświetla je oraz na żądanie użytkownika startuje wykrywacz alkoholu. \\
 
+\noindent Listing~\ref{lst:kubepi-fetch} przedstawia funkcję służącą do startowania wątku, który okresowo (domyślnie co 3 sekundy) odpytuje serwer przekazany jako parametr funkcji o dane.
 \begin{lstlisting}[language=golang,caption=Startowanie wątków do odczytu danych,label=lst:kubepi-fetch]
   runPollInterval(fetchFn, address, timeout = 3000, immediate = true) {
     let intervalId = setInterval(() => {
@@ -991,6 +995,7 @@ func (this Max7219) DisplayTemperature(temperature float32) error {
   }
 \end{lstlisting}
 
+\noindent Funkcja przedstawiona na listingu~\ref{lst:kubepi-dht-read} jest odpowiedzialna za uruchamianie oraz zatrzymywanie wątku pobierającego dane z czujnika temperatury i wilgotności DHT11. Odpytuje ona lokalny serwer o dane, który jest pośrednikiem między częścią webową, a klastrem.
 \begin{lstlisting}[language=golang,caption=Startowanie wątku odpytującego nasz serwer o dane z sensora DHT11,label=lst:kubepi-dht-read]
   handleDHT11() {
     if(this.state.dhtIntervalId === 0) {
@@ -1008,6 +1013,7 @@ func (this Max7219) DisplayTemperature(temperature float32) error {
   }
 \end{lstlisting}
 
+\noindent Ostatni listing~\ref{lst:kubepi-dht-go-read} przedstawia funkcję serwera Go, która odpowiedzialna jest za pobieranie odczytów z serwera monitorującego opisanego w sekcji~\ref{subsect:monitoring-server}.
 \begin{lstlisting}[language=golang,caption=Odczyt temperatury z naszego serwera,label=lst:kubepi-dht-go-read]
 func dht11Handler(w http.ResponseWriter, r *http.Request) {
 	dht11Response := new(DHT11Response)
@@ -1032,21 +1038,18 @@ func dht11Handler(w http.ResponseWriter, r *http.Request) {
 
 \newpage
 \subsubsection{Budowanie i dystrybucja}
-\begin{lstlisting}[caption=Plik do budowania aplikacji w architekturze X86/AMD64 i ARM,label=lst:compiling]
+W tej sekcji opisane zostały proces budowania i dystrybucji aplikacji wraz z użytymi narzędziami. \\ \\
+Język Go pozwala na łatwe budowanie aplikacji do pojedynczego pliku wykonywalnego. Użycie aplikacji \textit{xgo}, pozwoliło uprościć proces budowania aplikacji na różne architektury. Budowanie aplikacji na inne architektury odbywa się w kontenerze Dockera, który został wcześniej skonfigurowany i zawiera wszystkie zależności potrzebne do budowania aplikacji. Domyślnie korzysta on z kompilatora języka Go, jednak używa zaawansowanej konfiguracji w celu zoptymalizowania procesu kompilacji. \\
+
+\noindent Listing~\ref{lst:compiling} przedstawia plik \textit{Makefile} użyty do budowania aplikacji opisanej w sekcji~\ref{subsect:monitoring-server} zgodnej z architekturą ARM. Pozostałe aplikacje korzystają z podobnej konfiguracji.
+\begin{lstlisting}[caption=Makefile użyty do budowania aplikacji dla architektury ARM,label=lst:compiling]
 GO := $(shell command -v go 2> /dev/null)
 XGO := $(shell command -v xgo 2> /dev/null)
 
 prepare:
 	@mkdir build
 
-all: prepare x86 arm
-
-x86: prepare
-ifndef GO
-	$(error "Could not find GO compiler.")
-endif
-	@go build
-	@mv dht* build/
+all: prepare arm
 
 arm: prepare
 ifndef XGO
@@ -1059,6 +1062,8 @@ clean:
 	@sudo rm -rf build
 \end{lstlisting}
 
+\newpage
+\noindent Poniższy listing~\ref{lst:dockerfile} pokazuje prosty plik Dockera, który został użyty do zbudowania kontenera aplikacji webowej opisanej w sekcji~\ref{subsect:kubepi-monitor}. Dodaje on zbudowany plik wykonywalny do kontenera, następnie ustawia go jako domyślnie uruchamiany plik po wystartowaniu kontenera i udostępnia aplikacje na porcie 80.
 \begin{lstlisting}[caption=Przykładowy plik Dockera dla aplikacji webowej,label=lst:dockerfile]
 FROM floreks/kubepi-base
 
@@ -1069,80 +1074,99 @@ ENTRYPOINT ["/kubepi-monitor-linux-arm-6"]
 EXPOSE 80
 \end{lstlisting}
 
-\newpage
-\subsubsection{Uruchamianie w klastrze}
-
-\begin{lstlisting}[language=yaml,caption=Definicja aplikacji uruchamianej w klastrze 1,label=lst:yaml-start]
-kind: List
-apiVersion: v1
-items:
-- kind: Deployment
-  apiVersion: extensions/v1beta1
-  metadata:
-    labels:
-      app: dht-server
-    name: dht-server
-    namespace: default
-  spec:
-    replicas: 1
-    selector:
-      matchLabels:
-        app: dht-server
-    template:
-      metadata:
-        labels:
-          app: dht-server
-      spec:
-        nodeSelector:
-          target: master
-        containers:
-          - name: dht-server
-            securityContext:
-              privileged: true
-            image: floreks/dht-server
-            imagePullPolicy: Always
-            ports:
-              - containerPort: 3000
-                protocol: TCP
-              ...
+\noindent Ostatnim krokiem po zbudowaniu lokalnego kontenera jest wysłanie go na darmowy serwer przechowujący aplikacje Dockera, a mianowicie DockerHub. Komendy uruchamiane są z folderu zawierającego plik \textit{Dockerfile}.
+\begin{lstlisting}[language=bash]
+# Zbudowanie kontenera aplikacji o nazwie dht-server dla konta floreks
+$ docker build -t floreks/dht-server .
+# Wyslanie kontenera aplikacji na serwery DockerHub
+$ docker push floreks/dht-server
 \end{lstlisting}
 
-\begin{lstlisting}[language=yaml,caption=Definicja aplikacji uruchamianej w klastrze 2,label=lst:yaml-end,float]             
-...
-            volumeMounts:
-              - mountPath: /sys/class/gpio
-                name:      sys-class-gpio
-              - mountPath: /sys/devices
-                name:      sys-devices
-              - mountPath: /sys/bus
-                name:      sys-bus
-            args:
-              # Uncomment this if you want to change port
-              # - --port=3001
-        volumes:
-          - name:     sys-class-gpio
-            hostPath:
-              path:   /sys/class/gpio
-          - name:     sys-devices
-            hostPath:
-              path:   /sys/devices
-          - name:     sys-bus
-            hostPath:
-              path:   /sys/bus
-- kind: Service
-  apiVersion: v1
-  metadata:
-    labels:
+
+\newpage
+\subsubsection{Uruchamianie w klastrze}
+W celu uruchomienia naszej aplikacji w klastrze Kubernetesa wymagane jest stworzenie odpowiedniego pliku w formacie \textit{json} lub \textit{yaml}, którego struktura została przedstawiona poniżej. Dzieli się on na kilka części. Pierwsza część widoczna na listingu~\ref{lst:yaml-start} przedstawia ogólną definicję aplikacji. Najważniejszymi elementami są:
+\begin{itemize}
+\item{\textbf{kind: Deployment} --- definiuje typ obiektu, który odpowiedzialny będzie za zarządzanie naszą aplikacją.}
+\item{\textbf{labels} --- definiuje etykiety dla naszej aplikacji. Służą one głównie do powiązania obiektów typu \textit{Pod} z \textit{Deploymentem}.}
+\item{\textbf{replicas} --- definiuje liczbę replik naszej aplikacji, czyli ile kopii naszej aplikacji będzie uruchomionych w klastrze.}
+\item{\textbf{nodeSelector} --- definiuje etykietę węzła na którym może zostać uruchomiona nasza aplikacja. Jest to informacja dla planisty o tym, że dana aplikacja może być uruchomiona tylko na węzłach, które posiadają taką etykietę.}
+\end{itemize}
+
+\begin{lstlisting}[language=yaml,caption=Definicja aplikacji uruchamianej w klastrze - część 1,label=lst:yaml-start]
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  labels:
+    app: dht-server
+  name: dht-server
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
       app: dht-server
-    name: dht-server
-    namespace: default
-  spec:
-    type: NodePort
-    ports:
-    - port: 3000
-      targetPort: 3000
-    selector:
-      app: dht-server
+  template:
+    metadata:
+      labels:
+        app: dht-server
+    spec:
+      nodeSelector:
+        target: master
+\end{lstlisting}
+
+\noindent Listing~\ref{lst:yaml-end} pokazuje definicję kontenera aplikacji. Najważniejszymi elementami tej części są:
+\begin{itemize}
+\item{\textbf{privileged} --- pozwala na dostęp aplikacji do plików hosta oraz nadaje jej prawa \textit{roota}.}
+\item{\textbf{image} --- definiuje obraz aplikacji Dockera. Domyślnie pobierany jest on z DockerHuba.}
+\item{\textbf{volumeMounts} --- definiuje ścieżki pod którymi zamontowane zostają systemy plików zdefiniowane w następnej części.}
+\item{\textbf{volumes} --- definiuje systemy plików (foldery, serwery, itp.), które mogą być zamontowane w kontenerze aplikacji.}
+\end{itemize}
+\begin{lstlisting}[language=yaml,caption=Definicja aplikacji uruchamianej w klastrze - część 2,label=lst:yaml-end]             
+      containers:
+        - name: dht-server
+          securityContext:
+            privileged: true
+          image: floreks/dht-server
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /sys/class/gpio
+              name:      sys-class-gpio
+            - mountPath: /sys/bus
+              name:      sys-bus
+      volumes:
+        - name:     sys-class-gpio
+          hostPath:
+            path:   /sys/class/gpio
+        - name:     sys-bus
+          hostPath:
+            path:   /sys/bus
+\end{lstlisting}
+
+\newpage
+\noindent Listing~\ref{lst:yaml-service} definiuje serwis dla naszej aplikacji, który pozwoli udostępnić ją użytkownikom. Kluczowymi elementami tej części są:
+\begin{itemize}
+\item{\textbf{type} --- definiuje typ naszego serwisu. \textit{NodePort} oznacza, że aplikacja udostępniona będzie na automatycznie przydzielonym porcie z zakresu 30000-32767. }
+\item{\textbf{ports} --- definiuje port lub porty, które maja zostać przekierowane z wnętrza kontenera na zewnątrz. Przykładowo jeśli nasz serwer aplikacji uruchamiany jest na porcie 3000 w kontenerze, to dzięki temu będzie on dostępny również na porcie 3000 na przydzielonym dla Poda adresie IP.}
+\end{itemize}
+\begin{lstlisting}[language=yaml,caption=Definicja aplikacji uruchamianej w klastrze - część 3,label=lst:yaml-service]  
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: dht-server
+  name: dht-server
+  namespace: default
+spec:
+  type: NodePort
+  ports:
+  - port: 3000
+    targetPort: 3000
+  selector:
+    app: dht-server
 \end{lstlisting}
 
 \section{Opis użycia}
