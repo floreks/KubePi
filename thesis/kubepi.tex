@@ -100,57 +100,51 @@
 
 \chapter{Wstęp}\label{chap:wstep}
 \section{Problematyka i zakres pracy}
-Wraz z rozwojem Internetu Rzeczy na świecie powstają coraz to nowe urządzenia mające na celu automatyzację działań i ułatwienie życia człowieka. Dzięki ich zdolności do wzajemnej komunikacji, wymiany informacji oraz zdalnego zarządzania zasobami stają się one coraz bardziej popularne, a wręcz wymagane w życiu codziennym coraz większej grupy osób. Sterowanie oświetleniem, radiem czy innymi sprzętami elektronicznymi za pomocą naszego smartfona już nikogo nie dziwi. W wielu przypadkach urządzenia te muszą zbierać bardzo duże ilości danych oraz przesyłać je do centralnego punktu. Powoduje to ogromny wzrost ilości danych, które nie są w stanie zostać obsłużone przez jeden serwer. Powstaje więc potrzeba stworzenia niezawodnych, wydajnych i bezpiecznych systemów o wysokiej dostępności. \\
+Wraz z rozwojem Internetu Rzeczy\footnote{Internet Rzeczy (ang. Internet of Things) - koncepcja inteligentnego zarządzania otoczeniem i wymiany danych przy wykorzystaniu urządzeń codziennego użytku \cite{iot}.} na świecie powstają coraz to nowe urządzenia mające na celu automatyzację działań i ułatwienie życia człowieka. Dzięki ich zdolności do wzajemnej komunikacji, wymiany informacji oraz zdalnego zarządzania zasobami stają się one coraz bardziej popularne, a wręcz wymagane w życiu codziennym coraz większej grupy osób. Sterowanie oświetleniem, radiem czy innymi sprzętami elektronicznymi za pomocą naszego smartfona już nikogo nie dziwi. W wielu przypadkach urządzenia te muszą zbierać bardzo duże ilości danych oraz przesyłać je do centralnego punktu. Powoduje to ogromny wzrost ilości danych, które nie są w stanie zostać obsłużone przez jeden serwer. Powstaje więc potrzeba stworzenia niezawodnych, wydajnych i bezpiecznych systemów o wysokiej dostępności. \\
 \indent Technologie wirtualizacji
-\footnote{\cite{virtualization}}
+\footnote{Wirtualizacja (ang. virtualization) - abstrakcja fizycznych zasobów sprzętowych w celu udostępnienia logicznych zasobów. \cite{virtualization}}
 powstały w celu realizacji tych wymagań. Wirtualizacja serwerów dawno już wyparła tradycyjne serwery, które zostały zastąpione przez rozwiązania chmurowe. Niezależność sprzętowa, lepsza utylizacja zasobów, większe bezpieczeństwo, łatwa migracja danych i redukcja kosztów to tylko niektóre z wielu zalet wirtualizacji. Właśnie ta niezależność sprzętowa pozwala na coraz lepsze wykorzystanie mikrokontrolerów, których głównymi zaletami są mały koszt i niewielki pobór mocy, a dzięki coraz lepszej optymalizacji systemów i postępującej miniaturyzacji, również rosnąca wydajność. \\
 	\indent Obecnie nie trzeba już wydawać ogromnych kwot w celu uruchomienia własnego klastra do zarządzania danymi, czy wyposażenia naszego mieszkania, a nawet biura w inteligentne czujniki i kontrolery. Wystarczą nam w tym celu mikrokontrolery Raspberry Pi, które dzięki systemom typu open source takim jak Kubernetes pozwolą nam na stworzenie w pełni funkcjonalnego klastra. \\
 	\indent Proponowanym rozwiązaniem powyższych problemów będzie projekt o nazwie KubePi. Projekt ten skupia się na wirtualizacji opartej o kontenery Dockera
-	\footnote{\cite{docker}}
-zarządzane przez system zarządzania klastrem Kubernetes i ma na celu stworzenie rozproszonego systemu służącego do monitorowania otoczenia. Przykładowy klaster opierać się będzie na dwóch mikrokontrolerach Raspberry Pi. Do pierwszego urządzenia będącego zarazem głównym węzłem klastra podłączone zostaną trzy czujniki: temperatury, wilgotności oraz alkoholu. Jego zadaniem będzie udostępnianie zbieranych informacji. Drugie urządzenie zostanie natomiast wyposażone w wyświetlacz LED
-	\footnote{\cite{led}}
-, co pozwoli na odczyt i wyświetlanie temperatury raportowanej przez pierwsze urządzenie. Dodatkowo w klastrze zostanie zainstalowana aplikacja webowa
-\footnote{\cite{webapp}}
+	\footnote{Docker - narzędzie oferujące wirtualizację zasobów opartą o kontenery \cite{docker}.}
+zarządzane przez system zarządzania klastrem Kubernetes i ma na celu stworzenie rozproszonego systemu służącego do monitorowania otoczenia. Przykładowy klaster opierać się będzie na dwóch mikrokontrolerach Raspberry Pi. Do pierwszego urządzenia będącego zarazem głównym węzłem klastra podłączone zostaną trzy czujniki: temperatury, wilgotności oraz alkoholu. Jego zadaniem będzie udostęp\-nianie zbieranych informacji. Drugie urządzenie zostanie natomiast wyposażone w wyświetlacz LED, co pozwoli na odczyt i wyświetlanie temperatury raportowanej przez pierwsze urządzenie. Dodatkowo w klastrze zostanie zainstalowana aplikacja webowa
+\footnote{Aplikacja webowa (ang. web application) - program pracujący na serwerze, komunikujący się przez sieć komputerową z komputerem użytkownika z wykorzystaniem przeglądarki internetowej \cite{webapp}.}
 pozwalająca na zdalny monitoring. W celu lepszego zobrazowania komunikacji między urządzeniami zostanie ona uruchomiona na drugim urządzeniu.
 
 \section{Uzasadnienie wyboru tematu}
 W tej części opisane zostaną powody wyboru tematu związanego z systemem monitorowania otoczenia przy użyciu nowoczesnych technologii w oparciu o mikrokontrolery. Głównym powodem jest wykazanie użyteczności systemów chmurowych wysokiej dostępności w oparciu o mikrokontrolery. Wymaga to gwarancji pracy systemu nawet w razie uszkodzenia jednego z węzłów klastra. Drugim powodem jest zbadanie możliwości mikrokontrolerów jako alternatywy dla standardowych systemów chmurowych oraz porównanie wydajności względem ceny przy budowaniu klastra. Ze względu na małe rozmiary i koszt mikrokontrolery takie jak Raspberry Pi mogą służyć jako tania alternatywa do budowy inteligentnego systemu dla naszego domu i nie tylko.
 
 \section{Metoda badawcza}
-%TODO
 \begin{enumerate}
-\item Studia literaturowe z dziedziny generowania opisu mapowania obiektowo-relacyjnego w języku C++. \\ \\
-Obecnie dostępne źródła z tej dziedziny nie są sformalizowane. Dostępne są jedynie opisy i dokumentacje istniejących aplikacji, które uwzględniają
-w sposób ogólny ich budowę. Znalezione i użyte w tej pracy źródła nie są dostępne w języku polskim, więc muszą być tłumaczone w większości z języka angielskiego.
-Jako że nie ma oficjalnych książek dotyczących tematyki generowania opisu mapowania obiektowo-relacyjnego, większość źródeł tu zebranych to źródła elektroniczne, artykuły i dokumentacje.
-\item Analiza wymagań aplikacji szkieletowych generujących opis mapowania obie\-ktowo-relacyjnego. \\ \\
-Narzędzia zajmujące się generowaniem opisu mapowania obiektowo-relacyj\-nego są zazwyczaj tylko dodatkami do typowych aplikacji typu ORM. Nie znajdziemy tu
-modelu aplikacji, na którym można bazować. Wymagania postawione takiej aplikacji są zazwyczaj takie same i są one podyktowane przez aplikacje zajmujące się mapowaniem obiektowo-relacyjnym. Podobnie jest i w tym przypadku gdzie wymagania generatora opisu są postawione przez drugi moduł aplikacji zajmujący się mapowaniem obiektowo-relacyjnym.
-\item Proces projektowania i tworzenia Qubica. \\ \\
-W oparciu o zebrane informacje i wymagania aplikacji szkieletowych służą\-cych do generowania opisu mapowania obiektowo-relacyjnego zostanie stworzona aplikacja szkieletowa mająca na celu rozwiązanie problemów zidentyfikowanych w procesie analizy.
-\item Testy i wnioski dotyczące stworzonego narzędzia do generowania warstwy danych aplikacji w oparciu o bazę danych. \\ \\
-Metoda ta służy do wyciągnięcia wniosków na temat stworzonej aplikacji. Przeprowadzone zostaną testy porównawcze. Na podstawie wyników testów wyciągnięte zostaną odpowiednie wnioski na temat sposobu rozwiązania przedstawionych w pracy problemów oraz Qubica. Wszystko to pozwoli stwierdzić czy proponowane rozwiązanie jest lepsze, tańsze, szybsze od porównywanych.
+\item Studia literaturowe z zakresu chmur obliczeniowych, wirtualizacji oraz mikrokontrolerów. \\ \\
+Obecnie dostępne źródła z zakresu chmur obliczeniowych oraz wirtualizacji nie są dobrze sformalizowane. Dostępne są opisy i dokumentacje istniejących systemów, które uwzględniają
+w sposób ogólny ich budowę oraz działanie. Znalezione i użyte w tej pracy źródła nie są dostępne w języku polskim, więc muszą być tłumaczone w większości z języka angielskiego.
+Jako że nie ma oficjalnych książek dotyczących tematyki chmur obliczeniowych ani wirtualizacji, większość źródeł tu zebranych to źródła elektroniczne, artykuły i dokumentacje. Dostępność książek dotyczących mikrokontrolerów stoi na wyższym poziomie, więc w pracy zostało wykorzystane kilka pozycji poruszających tą tematykę.
+\item Analiza wymagań aplikacji uruchamianych w klastrze bazującym na systemie zarządzania klastrem Kubernetes. \\ \\
+W związku z tym, że system Kubernetes jest bardzo młody, nie istnieją lepsze źródła o tej tematyce niż oficjalna dokumentacja. Wszelkie wymagane informacje zostały zaczerpnięte z dokumentacji oraz jako, że jest to system otwartoźródłowy, dodatkowym źródłem informacji było oficjalne repozytorium Kubernetesa dostępne na portalu GitHub.
+\item Proces projektowania i tworzenia KubePi. \\ \\
+W oparciu o zebrane informacje i wymagania aplikacji uruchamianych w klastrze Kubernetesa zostanie stworzony rozproszony system oparty o mikrokontrolery Raspberry Pi. Jego zadaniem będzie monitorowanie otoczenia w oparciu o stworzone aplikacje, co pozwoli na rozwiązanie problemów zidentyfikowanych w procesie analizy.
+\item Wnioski dotyczące stworzonego systemu do monitorowania otoczenia. \\ \\
+Metoda ta służy do wyciągnięcia wniosków na temat stworzonego systemu oraz aplikacji. Na podstawie działania systemu wyciągnięte zostaną odpowiednie wnioski dotyczące sposobu rozwiązania przedstawionych w pracy problemów oraz projektu KubePi. Wszystko to pozwoli stwierdzić czy proponowane rozwiązanie spełnia postawione w pracy założenia.
 
 \end{enumerate}
 
 \clearpage
 
 \section{Przegląd literatury w dziedzinie}
-%TODO
-\subsubsection{Źródła z zakresu języka C++}
-	\indent Użyte w tej pracy źródła dotyczące języka C++ służą przede wszystkim poznaniu technik programowania bibliotek współdzielonych oraz technik metaprogramowania. Dodatkowym celem przy pisaniu samej aplikacji jest chęć poznania nowego standardu języka C++11, który również jest przedstawiony w użytych źródłach. Szczegółowe omówienie tego standardu zostało przedstawione na stronie twórcy języka i służyć będzie jako główne źródło wiedzy \cite{strostrup}.
-Sposób tworzenia bibliotek i techniki metaprogramowania zostały opisane w książce Advanced C++ Metaprogramming \cite{c++2}.
-\subsubsection{Źródła z zakresu narzędzi i aplikacji do mapowania obiektowo-relacyjnego}
-	\indent Tematyka generowania opisu mapowania obiektowo-relacyjnego jest związana z narzędziami ORM i brak jest książek dedykowanych tej tematyce. Do zrozumienia samej idei działania generatora należy przybliżyć działanie narzędzi do mapowania obiektowo-relacyjnego. W pozycjach EJB 3 Java persistence API \cite{ejb} oraz Hibernate w akcji \cite{hibernateInAction}
-znajdziemy opis działania narzędzi typu ORM oraz techniki mapowania obiektowo-relacyjnego.
-\subsubsection{Źródła z zakresu działania aplikacji szkieletowej Qt}
-	\indent Aplikacja szkieletowa Qt to zestaw bibliotek i narzędzi przydatnych programistom. Dzięki mechanizmowi refleksji, wsparciu dialektów SQL czy prostej budowie aplikacji graficznych znacznie ułatwia tworzenie dużych aplikacji. Użyta książka Introduction to Design Patterns in C++ with Qt \cite{c++patterns}
-opisuje w prosty sposób mechanizm refleksji, wzorce czy tworzenie bibliotek przy użyciu tego frameworka.
-Dodatkowo głównym narzędziem w etapie tworzenia aplikacji będzie dokumentacja Qt dostępna w internecie pod adresem \cite{qtframework}.
-\subsubsection{Źródła z zakresu SQL}
-	\indent W celu generowania opisu bazy danych potrzebna jest znajomość struktury bazy, typów pól, połączeń. Wymaga to dla niektórych dialektów SQL pisania dość nietypowych zapytań. Potrzebne informacje zostały zasięgnięte ze źródeł elektronicznych i odpowiednich dokumentacji konkretnych dialektów, m. in: stron internetowa z dokumentacją dialektu MySQL \cite{mysqlweb}.
-
-
+\subsubsection{Źródła z zakresu języka Go i biblioteki ReactJS}
+	\indent Głównym źródłem z zakresu języka Go była dokumentacja. Przydatnymi pozycjami były opisy struktur i kanałów zawarte w sekcji \textit{Effective Go} \cite{effectiveGo} oraz wskazówki dotyczące kompilacji dostępne w sekcji \textit{Compiling Go} \cite{compileGo}. W przypadku biblioteki ReactJS również została wykorzystana głównie dokumentacja dostępna na stronie głównej projektu \cite{reactJSDoc}.
+\subsubsection{Źródła z zakresu Internetu Rzeczy}
+	\indent W przypadku tematyki z zakresu Internetu Rzeczy wartościową pozycją okazała się książka \textit{The Internet of Things: Enabling Technologies, Platforms, and Use Cases} \cite{iot} oraz w dużej mierze własne doświadczenie zdobyte przy pracy z technologiami chmurowymi.
+\subsubsection{Źródła z zakresu chmur obliczeniowych}
+	\indent Ze względu na dużą popularność tematu chmur obliczeniowych wybór książek z tej dziedziny jest dość duży. Wymagane było przedstawienie zagadnień teoretycznych w przystępny i prosty sposób w czym pomogła pozycja \textit{Cloud Computing: Concepts, Technology \& Architecture} \cite{cloud}.
+\subsubsection{Źródła z zakresu wirtualizacji}
+	\indent Wirtualizacja jako jedno z podstawowych zagadnień poruszanych w pracy musiało zostać dobrze wyjaśnione. Tutaj również dużą rolę odniosło własne doświadczenie, wraz z wykorzystaniem książki \textit{Virtualization Essentials} \cite{virtualization}.
+\subsubsection{Źródła z zakresu Kubernetesa}
+	\indent Kubernetes jako względnie nowy system nie posiada wielu formalnych źródeł, z których można pozyskać informacje. W tym wypadku wymagane było posiłkowanie się głównie przy opisie dokumentacją \cite{kubernetes}.
+\subsubsection{Źródła z zakresu mikrokontrolerów}
+	\indent W tym wypadku wybór źródeł był bardzo duży i szczegółowy. Ze względu na dobre opinie i dużą popularność wybór padł na książkę autorstwa \textit{Timothy Shorta} pod tytułem \textit{Raspberry Pi 3: Beginner to Pro – Step by Step Guide} \cite{raspberry}, która w przystępny sposób wraz z przykładami opisuje mikrokontrolery Raspberry Pi oraz interfejsy komunikacyjne użyte przy tworzeniu aplikacji. Dodatkowym źródłem informacji była dokumentacja użytych czujników \cite{ds18b20Doc} \cite{max7219Doc} \cite{dht11Doc}  \cite{mq3Doc}.
+	
 \section{Układ pracy}
 Celem pracy jest zaproponowanie architektury i sprawdzenie w działaniu rozproszonego systemu wysokiej dostępności służącego do monitorowania otoczenia. \\
 \indent Rozdział pierwszy zawiera szczegółowy opis problemu. Zostają w nim przedstawione różne problemy związane z wydajnością oraz bezpieczeństwem tradycyjnych rozwiązań, wraz z opisem metod badawczych użytych do analizy tematu. Podsumowane zostają również główne założenia i cele pracy. Na koniec przeprowadzony zostaje przegląd literatury związanej z tematem, z naciskiem na kluczowe zagadnienia dotyczące wirtualizacji, rozwiązań chmurowych oraz mikrokontrolerów opartych na architekturze ARM, wraz z krótkim opisem użytych źródeł. \\
@@ -166,8 +160,8 @@ Internet Rzeczy zyskuje na popularności, głównie za sprawą swojego podejści
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.6\textwidth]{images/placeholder.png}
-	\caption{Przedstawienie Internetu Rzeczy w ujęciu graficznym}
+	\includegraphics[width=0.6\textwidth]{images/iot.jpg}
+	\caption{Przedstawienie Internetu Rzeczy w ujęciu graficznym \cite{iotImg}.}
 \end{figure}
 
 \subsection{Obszary zastosowań}
@@ -185,25 +179,25 @@ Należy zaznaczyć, że systemy realizacji Internetu Rzeczy są w zasadzie ogran
 
 \section{Chmury Obliczeniowe}
 Chmury obliczeniowe stają się coraz ważniejszym elementem Internetu Rzeczy. Dostarczają one swoje zasoby i usługi przy użyciu internetu. Słowo chmura opisuje sposób przetwarzania danych, który oderwany jest od naszego systemu, a przeprowadzany jest na zdalnych serwerach. \\
-\indent W szerszym ujęciu natomiast chmura jest centrum danych, w którym poszczególne węzły są wirtualizowane przy użyciu wirtualnych maszyn. Głównym powodem używania chmur obliczeniowych jest rozwiązywanie złożonych problemów oraz analiza dużych ilości danych. Wszystkie dane mogą być łatwo udostępniane innym osobom, a dostęp gwarantowany z każdego zakątka świata. \\ \\
+\indent W szerszym ujęciu natomiast chmura jest centrum danych, w którym poszczególne węzły są wirtualizowane przy użyciu wirtualnych maszyn. Głównym powodem używania chmur obliczeniowych jest rozwiązywanie złożonych problemów oraz analiza dużych ilości danych. Wszystkie dane mogą być łatwo udostępniane innym osobom, a dostęp gwarantowany z każdego zakątka świata \cite{cloud}. \\ \\
 Bardziej formalna definicja chmur obliczeniowych przedstawia się następująco.
 \begin{cloudcomputing}
-Dostarczanie usług obliczeniowych, serwerów, magazynu, baz danych, sieci, oprogramowania analiz, itd. za pośrednictwem internetu. Firmy oferujące te usługi obliczeniowe są nazywane dostawcami chmury i zazwyczaj pobie\-rają opłaty za usługi chmury obliczeniowej w zależności od użycia, podobnie jak dostawcy energii elektrycznej lub wody.
+Dostarczanie usług obliczeniowych, serwerów, magazynu, baz danych, sieci, oprogramowania analiz, itd. za pośrednictwem internetu. Firmy oferujące te usługi obliczeniowe są nazywane dostawcami chmury i zazwyczaj pobie\-rają opłaty za usługi chmury obliczeniowej w zależności od użycia, podobnie jak dostawcy energii elektrycznej lub wody \cite{cloudComputing}.
 \end{cloudcomputing}
 
 \subsection{Architektura}
 W związku z szybkim rozwojem chmur obliczeniowych, zostały one podzielone na trzy główne modele usług w celu utylizacji mocy obliczeniowej dla konkretnych potrzeb użytkowników. Modele te zostały zilustrowane na poniższym obrazku obrazującym architekturę chmur obliczeniowych. Architektura ta uwzględnia następujące podziały:
 
 \begin{itemize}
-\item Infrastruktura jako serwis (z ang. Infrastracture-as-a-Service) --- znana również pod nazwą hardware-as-a-service\footnote{\cite{haas}}. Jest najprostszą odmianą usługi chmu\-ry obliczeniowej i pozwala na zdalny dostęp do zasobów sprzętowych. Dostarcza moc obliczeniową, przestrzeń dyskową i zasoby sieciowe. Jednym z najbardziej znanych dostawców takich usług jest Amazon Elastic Compute Cloud.
-\item Platforma jako serwis (z ang. Platform-as-a-Service) --- usługa ta oferuje przede wszystkim środowisko deweloperskie oraz zbiór aplikacji, które mogą być używane do tworzenia i uruchamiania własnych aplikacji. Dostarcza bazy danych, serwery webowe, system operacyjny, środowisko uruchomieniowe, przestrzeń dyskową i wiele innych zasobów. Głównymi dostawcami tych usług są obecnie Microsoft Azure\footnote{\cite{azure}} oraz Google App Engine\footnote{\cite{gae}}
+\item Infrastruktura jako serwis (z ang. Infrastracture-as-a-Service) --- znana również pod nazwą hardware-as-a-service. Jest najprostszą odmianą usługi chmu\-ry obliczeniowej i pozwala na zdalny dostęp do zasobów sprzętowych. Dostarcza moc obliczeniową, przestrzeń dyskową i zasoby sieciowe. Jednym z najbardziej znanych dostawców takich usług jest Amazon Elastic Compute Cloud.
+\item Platforma jako serwis (z ang. Platform-as-a-Service) --- usługa ta oferuje przede wszystkim środowisko deweloperskie oraz zbiór aplikacji, które mogą być używane do tworzenia i uruchamiania własnych aplikacji. Dostarcza bazy danych, serwery webowe, system operacyjny, środowisko uruchomieniowe, przestrzeń dyskową i wiele innych zasobów. Głównymi dostawcami tych usług są obecnie Microsoft Azure oraz Google App Engine.
 \item Oprogramowanie jako serwis (z ang. Software-as-a-Service) --- ostatni z modeli usług chmury obliczeniowej, który oferuje przechowywanie i uruchomienie aplikacji klienta na własnych serwerach oraz udostępnienie jej użytkownikom przez internet. Pozwala to na wyeliminowanie potrzeby instalacji oraz uruchamiania aplikacji na komputerze klienta. W efekcie to dostawca usług ma obowiązek zapewnienia ciągłości działania naszej aplikacji. Najbardziej znane usługi SaaS to np. Google Docs czy Google Apps.
 \end{itemize}
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.6\textwidth]{images/placeholder.png}
-	\caption{Architektura chmur obliczeniowych}
+	\includegraphics[width=1\textwidth]{images/cloudarchitecture.jpg}
+	\caption{Architektura chmur obliczeniowych \cite{cloudArchImg}.}
 \end{figure}
 
 \section{Wirtualizacja}
@@ -221,12 +215,12 @@ Podejście to w ciągu ostatniej dekady było szeroko używane do tworzenia śro
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.81\textwidth]{images/placeholder-wide.png}
-	\caption{Architektura chmur obliczeniowych}
+	\includegraphics[width=0.9\textwidth]{images/virtualizationArch.png}
+	\caption{Architektura wirtualizacji opartej o nadzorcę \cite{hypervisorArchImg}.}
 \end{figure}
 
 \subsubsection{Właściwości nadzorcy}
-Według książki [odnosnik] nadzorcy wyróżniają się następującymi właściwościami:
+Według książki \textit{Virtualization Essentials} \cite{virtualization} nadzorcy wyróżniają się następującymi właściwościami:
 \begin{enumerate}
 \item Transparentność --- pozwala uruchamiać oprogramowanie na maszynie wirtualnej bez żadnych modyfikacji i niezależnie od sprzętu oraz umożliwia dzielenie zasobów sprzętowych przez wiele maszyn wirtualnych.
 \item Izolacja --- umożliwia nadzorcy tworzenie i uruchamianie niezależnych, odizolowanych od siebie środowisk wirtualnych w obrębie jednego fizycznego systemu. Główną zaletą jest zapobieganie oddziaływania błędów aplikacji na inne aplikacje uruchomione w innych środowiskach wirtualnych.
@@ -236,19 +230,19 @@ Według książki [odnosnik] nadzorcy wyróżniają się następującymi właśc
 
 \subsection{Wirtualizacja oparta o kontenery}
 Wirtualizacja oparta o kontenery jest mniej wymagającym w kontekście zasobów podejściem do wirtualizacji. Operuje ona na poziomie systemu operacyjnego i tworzy środowiska wirtualne jako procesy systemowe, co pozwala na dzielenie zasobów sprzętowych z systemem operacyjnym. Wprowadza ona pewien poziom abstrakcji, w którym jądro systemu jest dzielone pomiędzy kontenery i umożliwia uruchamianie więcej niż jednego procesu w obrębie każdego kontenera. Dzięki takiemu rozwiązaniu nie ma potrzeby uruchamiani pełnego systemu operacyjnego odizolowanego od systemu operacyjnego hosta. Przekłada się to bezpośrednio na oszczędność zużycia pamięci, czasu procesora i przestrzeni dyskowej. \\
-\indent Na poniższym rysunku możemy zobaczyć cztery kontenery uruchomione w systemie operacyjnym. Zasoby sprzętowe dzielone są pomiędzy nadrzędny system operacyjny oraz systemy operacyjne gości (kontenery). Zaletą tego typu wirtualizacji jest możliwość uruchomienia dużej ilości kontenerów w obrębie jednego systemu operacyjnego. Ma to również swoje wady, a mianowicie nie możemy przykładowo uruchomić systemu operacyjnego Windows jako kontener aplikacji na hoście z systemem operacyjnym Linux. Dodatkowo w porównaniu ze standardowymi nadzorcami kontenery nie gwarantują odpowiedniej izolacji zasobów, co może mieć wpływ na bezpieczeństwo. Funkcje wirtualizacji przy użyciu kontenerów wykorzystują dwie podstawowe właściwości jądra systemu: grupy kontrolne(cgroups) oraz przestrzenie nazw(namespaces).
+\indent Na poniższym rysunku możemy zobaczyć trzy kontenery uruchomione w systemie operacyjnym. Zasoby sprzętowe dzielone są pomiędzy nadrzędny system operacyjny oraz systemy operacyjne gości (kontenery). Zaletą tego typu wirtualizacji jest możliwość uruchomienia dużej ilości kontenerów w obrębie jednego systemu operacyjnego. Ma to również swoje wady, a mianowicie nie możemy przykładowo uruchomić systemu operacyjnego Windows jako kontener aplikacji na hoście z systemem operacyjnym Linux. Dodatkowo w porównaniu ze standardowymi nadzorcami kontenery nie gwarantują odpowiedniej izolacji zasobów, co może mieć wpływ na bezpieczeństwo. Funkcje wirtualizacji przy użyciu kontenerów wykorzystują dwie podstawowe właściwości jądra systemu: grupy kontrolne(cgroups) oraz przestrzenie nazw(namespaces).
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.81\textwidth]{images/placeholder-wide.png}
-	\caption{Architektura wirtualizacji opartej o kontenery}
+	\includegraphics[width=0.8\textwidth]{images/containerArch.jpg}
+	\caption{Architektura wirtualizacji opartej o kontenery \cite{hypervisorArchImg}.}
 \end{figure}
 
 \subsubsection{Grupy kontrolne}
-Grupy kontrolne to jedna z głównych funkcji jądra systemu, która pozwala użytkownikom alokować oraz ograniczać zasoby pomiędzy grupami procesów. Zasoby te to między innymi czas procesora, pamięć systemowa, przestrzeń dyskowa czy wykorzystanie sieci. Grupy kontrolne umożliwiają również sprawne zarządzanie zasobami przeznaczonymi dla kontenerów i działających w nich aplikacji. Przykładowo jeśli aplikacja tworzy dwa procesy z odrębnymi zasobami, może być rozdzielona na dwie grupy kontrolne z różnymi limitami użycia zasobów. Dodatkowo dzięki użyciu grup kontrolnych można w łatwy sposób monitorować i odmawiać lub przyznawać zasoby odpowiednim procesom. Możliwa jest również dynamiczna konfiguracja w trakcie działania systemu. Dzięki temu administrator może w łatwy sposób kontrolować zarządzanie zasobami w systemie. 
+Grupy kontrolne to jedna z głównych funkcji jądra systemu, która pozwala użytkownikom alokować oraz ograniczać zasoby pomiędzy grupami procesów. Zasoby te to między innymi czas procesora, pamięć systemowa, przestrzeń dyskowa czy wykorzystanie sieci. Grupy kontrolne umożliwiają również sprawne zarządzanie zasobami przeznaczonymi dla kontenerów i działających w nich aplikacji. Przykładowo jeśli aplikacja tworzy dwa procesy z odrębnymi zasobami, może być rozdzielona na dwie grupy kontrolne z różnymi limitami użycia zasobów. Dodatkowo dzięki użyciu grup kontrolnych można w łatwy sposób monitorować i odmawiać lub przyznawać zasoby odpowiednim procesom. Możliwa jest również dynamiczna konfiguracja w trakcie działania systemu. Dzięki temu administrator może w łatwy sposób kontrolować zarządzanie zasobami w systemie \cite{linux}. 
 
 \subsubsection{Przestrzenie nazw}
-Przestrzenie nazw to kolejna ważna funkcjonalność dostępna w jądrze systemu, która pozwala na izolacje procesów wewnątrz kontenerów. Gwarantuje ona każdemu procesowi dedykowaną przestrzeń, w której może on działać, bez ingerencji w procesy uruchomione w innych przestrzeniach nazw. Dodatkowo zapewnia izolację środowiska uruchomieniowego procesów. Obecnie w systemach Linux możemy znaleźć sześć domyślnych przestrzeni nazw:
+Przestrzenie nazw to kolejna ważna funkcjonalność dostępna w jądrze systemu, która pozwala na izolacje procesów wewnątrz kontenerów. Gwarantuje ona każdemu procesowi dedykowaną przestrzeń, w której może on działać, bez ingerencji w procesy uruchomione w innych przestrzeniach nazw. Dodatkowo zapewnia izolację środowiska uruchomieniowego procesów \cite{linux}. Obecnie w systemach Linux możemy znaleźć sześć domyślnych przestrzeni nazw:
 \begin{itemize}
 \item zamontowanych systemów plików (mnt) --- zawiera drzewo katalogów z zamontowanymi systemami plików. Podstawowy system plików jest montowany w korzeniu drzewa w czasie uruchamiania systemu. Utworzenie osobnej przestrzeni nazw systemu plików dla grupy procesów umożliwia zamontowania sytemu plików, który będzie widoczny tylko dla tej grupy procesów. 
 
@@ -264,7 +258,7 @@ Przestrzenie nazw to kolejna ważna funkcjonalność dostępna w jądrze systemu
 \end{itemize}
 
 \subsubsection{Właściwości kontenerów}
-Według [dodac ksiazke], możemy wyróżnić cztery właściwości kontenerów Linuxa, które sprawiają, że są one atrakcyjne dla użytkowników:
+Według \textit{Linux Bible} \cite{linux}, możemy wyróżnić cztery właściwości kontenerów Linuxa, które sprawiają, że są one atrakcyjne dla użytkowników:
 
 \begin{enumerate}
 \item Przenośność --- kontenery mogą działać na wielu różnych środowiskach i nie wymagają dodatkowych kroków w celu dostosowania systemu operacyjnego. Dodatkowo można uruchamiać wiele aplikacji w obrębie jednego kontenera, a następnie uruchamiać je na różnych środowiskach.
@@ -276,18 +270,10 @@ Według [dodac ksiazke], możemy wyróżnić cztery właściwości kontenerów L
 \item Elastyczność --- przy użyciu kontenerów możemy w prosty sposób uruchomić dużą liczbę aplikacji na pojedynczym systemie operacyjnym. Biorąc pod uwagę, że nie uruchamiają one pełnego systemu operacyjnego, możemy w łatwy i wydajny sposób zarządzać wieloma aplikacjami. 
 \end{enumerate}
 
-Po zapoznaniu się z technikami wirtualizacji opartymi o nadzorcę i kontenery możemy w łatwy i czytelny sposób przedstawić ich porównanie w formie poniższej tabeli.
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.81\textwidth]{images/placeholder-wide.png}
-	\caption{Architektura wirtualizacji opartej o kontenery}
-\end{figure}
-
 \subsection{Docker}
 Docker jest jednym z najpopularniejszych narzędzi bazujących na wirtualizacji opartej o kontenery. Został on po raz pierwszy przedstawiony przez Solomona Hykesa, 15 marca 2013 roku. W tamtym czasie niewiele, bo około 40 osób uzyskało szansę poznania tego narzędzia. \\
 \indent Docker jest narzędziem które w łatwy sposób pozwala na tworzenie i dystrybucję aplikacji na różne środowiska. Dodatkowo umożliwia proste skalowanie i konfigurację naszych aplikacji. Pozwala w znaczący sposób skrócić proces tworzenia i testowania oprogramowania oraz natywnie korzysta z dwóch opisanych wcześniej funkcji jądra systemu, a mianowicie grup kontrolnych i przestrzeni nazw. Ważne jest również to, że Docker pozwala uruchomić niemal każdą aplikację bezpiecznie w kontenerze, dostarczając izolacjęi bezpieczeństwo na poziomie systemu. Pozwala to uruchamiać wiele kontenerów jednocześnie bez obaw, że będą one oddziaływały na siebie w jakikolwiek szkodliwy sposób. Wystarczy jedynie minimalny system operacji ze zgodną wersją jądra systemu oraz plik wykonalny Dockera. \\
-\indent W związku z tym, że aplikacje zostają uruchomione w izolowanym środowisku, Docker udostępnia narzędzia dla ułatwienia budowy, uruchamiania i zarządzania kontenerami. Oprócz możliwości uruchomienia go na lokalnym komputerze, istnieje również szereg dostawców usług, którzy wspierają kontenery Dockera, np. Google Cloud Platform, Microsoft Azure, Amazon EC2. Istnieje również platforma o nazwie Resin.io, która oferuje wsparcie systemów opartych na Dockerze dla urządzeń z zakresu Internetu Rzeczy, jednak dokładniej zapoznamy się z nią w rozdziale [link 2.8 Resin.io].
+\indent W związku z tym, że aplikacje zostają uruchomione w izolowanym środowisku, Docker udostępnia narzędzia dla ułatwienia budowy, uruchamiania i zarządzania kontenerami. Oprócz możliwości uruchomienia go na lokalnym komputerze, istnieje również szereg dostawców usług, którzy wspierają kontenery Dockera, np. Google Cloud Platform, Microsoft Azure, Amazon EC2. Istnieje również platforma o nazwie Resin.io, która oferuje wsparcie systemów opartych na Dockerze dla urządzeń z zakresu Internetu Rzeczy, jednak dokładniej zapoznamy się z nią w sekcji~\ref{subsect:resin}.
 
 \subsubsection{Cele Dockera}
 Głównymi celami Dockera sa:
@@ -300,12 +286,12 @@ Głównymi celami Dockera sa:
 \end{itemize}
 
 \subsubsection{Architektura Dockera}
-Docker bazuje na modelu klient-serwer. Klient Dockera komunikuje się z demonem\footnote{\cite{daemon}}, który odpowiada za tworzenie, uruchamianie oraz dystrybucję kontenerów. Zazwyczaj oba te komponenty uruchamiane są na tej samej maszynie, jednak możliwe jest uruchomienie demona na zdalnej maszynie i podłączenie się do niej za pomocą aplikacji klienckiej. Architektura została pokazana na poniższym rysunku. Każdy z komponentów ma określone zadania, które zostaną opisane poniżej.
+Docker bazuje na modelu klient-serwer. Klient Dockera komunikuje się z demonem\footnote{Demon (ang. daemon) - program lub proces, wykonywany wewnątrz środowiska systemu operacyjnego, bez konieczności interakcji z użytkownikiem \cite{daemon}.}, który odpowiada za tworzenie, uruchamianie oraz dystrybucję kontenerów. Zazwyczaj oba te komponenty uruchamiane są na tej samej maszynie, jednak możliwe jest uruchomienie demona na zdalnej maszynie i podłączenie się do niej za pomocą aplikacji klienckiej. Architektura została pokazana na poniższym rysunku. Każdy z komponentów ma określone zadania, które zostaną opisane poniżej.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.81\textwidth]{images/placeholder-wide.png}
-	\caption{Architektura wirtualizacji opartej o kontenery}
+	\includegraphics[width=1\textwidth]{images/dockerArch.jpg}
+	\caption{Architektura dockera \cite{dockerArchImg}.}
 \end{figure}
 
 \subsubsection{Demon Dockera}
@@ -315,7 +301,7 @@ Głównym zadanie tego komponentu jest zarządzanie działającymi kontenerami. 
 Aplikacja kliencka Dockera jest, interfejsem uruchamianym z poziomu konsoli. Służy ona do komunikacji z procesem demona. Użytkownik poprzez odpowiednie komendy klienta może pośrednio komunikować się z demonem.
 
 \subsubsection{Obrazy Dockera}
-Obrazy są podstawowym źródłem służącym do tworzenia kontenerów. W pewnym sensie są one kodem źródłowym kontenerów. Obrazy można budować samemu praktycznie od zera lub użyć już istniejących obrazów dostępnych na platformach takich jak DockerHub\footnote{\cite{dockerhub}}. Są one łatwe w konfiguracji i tworzeniu, a dzięki możliwości łatwego dzielenia się nimi, również łatwo dostępne. \\
+Obrazy są podstawowym źródłem służącym do tworzenia kontenerów. W pewnym sensie są one kodem źródłowym kontenerów. Obrazy można budować samemu praktycznie od zera lub użyć już istniejących obrazów dostępnych na platformach takich jak DockerHub\footnote{DockerHub - strona będąca oficjalnym darmowym repozytorium aplikacji Dockera \cite{dockerhub}.}. Są one łatwe w konfiguracji i tworzeniu, a dzięki możliwości łatwego dzielenia się nimi, również łatwo dostępne. \\
 \indent Obrazy złożone są z wielu warstw instrukcji. Przykładowo, użytkownik może zdefiniować, aby przy tworzeniu obrazu uruchomiona została odpowiednia komenda systemowa, skopiowany folder czy ściągnięte dodatkowe zależności potrzebne do uruchomienia aplikacji. Następnie wszystkie warstwy są łączone w celu stworzenia obrazu. Dzięki takiemu podejściu do tworzenia obrazów, jeśli aktualizujemy tylko naszą aplikację, nie wymaga to przebudowy innych warstw, a jedynie aktualizacji warstwy zawierającej naszą aplikację.
 
 \subsubsection{Rejestr Dockera}
@@ -325,31 +311,30 @@ Rejestry używane są do przechowywania stworzonych obrazów. Mogą być one pry
 Jak już wcześniej wspomniano, kontenery tworzone są przy użyciu obrazów, które mogą zawierać również aplikacje i różne serwisy. Uruchamiają aplikacje w odizolowanym środowisku zawierającym wszelki zależności wymagane do ich działania. 
 
 \section{Systemy zarządzania kontenerami}
-Jedną z największych zalet kontenerów jest możliwość zarządzania nimi jako częścią klastra poprzez enkapsulację aplikacji w węzłach klastra. Załóżmy, że posiadamy pojedynczy serwer, na którym uruchomionych jest kilkaset kontenerów aplikacji, a każdy z nich wykonuje inne zadanie. Kontenery te mają dostęp do internetu i działają w sposób, który nie zakłóca pracy innych kontenerów na serwerze. Chcąc wykonać pewne operacje na większej grupie kontenerów, użytkownik może mieć trudności w zarządzaniu nimi. W takich sytuacjach z pomocą przychodzą systemy zarządzania kontenerami, które pozwalają nam grupować powiązane ze sobą kontenery aplikacji oraz zarządzać nimi w łatwy sposób poprzez swoje API\footnote{\cite{}}. Istnieje wiele systemów, jednak obecnie najpopularniejszymi z nich są Kubernetes (stworzony przez Google) oraz Docker Swarm (stworzony przez Dockera).
+Jedną z największych zalet kontenerów jest możliwość zarządzania nimi jako częścią klastra poprzez enkapsulację aplikacji w węzłach klastra. Załóżmy, że posiadamy pojedynczy serwer, na którym uruchomionych jest kilkaset kontenerów aplikacji, a każdy z nich wykonuje inne zadanie. Kontenery te mają dostęp do internetu i działają w sposób, który nie zakłóca pracy innych kontenerów na serwerze. Chcąc wykonać pewne operacje na większej grupie kontenerów, użytkownik może mieć trudności w zarządzaniu nimi. W takich sytuacjach z pomocą przychodzą systemy zarządzania kontenerami, które pozwalają nam grupować powiązane ze sobą kontenery aplikacji oraz zarządzać nimi w łatwy sposób poprzez swoje API. Istnieje wiele systemów, jednak obecnie najpopularniejszymi z nich są Kubernetes (stworzony przez Google) oraz Docker Swarm (stworzony przez Dockera).
 
 \subsection{Kubernetes}
 Kubernetes jest otwartozródłowym systemem do zarządzania kontenerami aplikacji na wielu fizycznych i wirtualnych maszynach. Jego głównymi zaletami są: automatyczne rozlokowanie aplikacji w klastrze, autoskalowanie oraz zarządzanie istniejącymi aplikacjami. Został on stworzony w 2014 roku jako rezultat wielu lat doświadczeń firmy Google w zarządzaniu aplikacjami i kontenerami wewnątrz firmy. Dzięki Kubernetesowi możemy w łatwy sposób zainstalować naszą aplikację w klastrze, zaktualizować ją bez konieczności wyłączania czy zarządzać jej zasobami sprzętowymi w celu optymalizacji jej działania. Pozwala to na szybką reakcję w przypadku wystąpienia błędu lub wykorzystania limitu zasobów. Dodatkowo, Kubernetes jest przenośny, łatwy w uruchomieniu oraz może służyć jako publiczna, prywatna, a nawet hybrydowa chmura. Jego budowa oparta jest o moduły, które mogą być łatwo zastąpione, a każdy komponent ma swoje konkretne zadanie i zbudowany jest niezależnie od innych. Uznawany jest za system odporny na błędy, który zaprogramowany jest w taki sposób, aby radzić sobie w przypadku wystąpienia błędów, zazwyczaj bez konieczności ingerencji człowieka. \\
-	\indent Kubernetes wprowadza szereg obiektów, które są abstrakcją mającą na celu wprowadzenie czytelnej i zrozumiałej dla użytkownika struktury systemu. Kontenery aplikacji użytkownika przedstawiane są jako pody \footnote{\cite{}}, czyli podstawowa struktura systemu, grupująca kontenery i zarządzająca nimi. Przed ich uruchomieniem system bierze pod uwagę zasoby sprzętowe wszystkich węzłów klastra i decyduje, na którym z nich powinny zostać uruchomione kontenery. Każdej akcji towarzyszy szereg decyzji, które muszą zostać podjęte przez kontrolery i planistę systemu w celu jak najefektywniejszego zarządzania zasobami.
+	\indent Kubernetes wprowadza szereg obiektów, które są abstrakcją mającą na celu wprowadzenie czytelnej i zrozumiałej dla użytkownika struktury systemu. Kontenery aplikacji użytkownika przedstawiane są jako pody \footnote{Pod - podstawowy obiekt tworzony przeze Kubernetesa, służący do zarządzania kontenerami aplikacji \cite{kubernetes}.}, czyli podstawowa struktura systemu, grupująca kontenery i zarządzająca nimi. Przed ich uruchomieniem system bierze pod uwagę zasoby sprzętowe wszystkich węzłów klastra i decyduje, na którym z nich powinny zostać uruchomione kontenery. Każdej akcji towarzyszy szereg decyzji, które muszą zostać podjęte przez kontrolery i planistę systemu w celu jak najefektywniejszego zarządzania zasobami \cite{kubernetes}.
 \subsubsection{Początki Kubernetesa - System Borg}
-Kubernetes jest następcą systemu zwanego Borg, który jest używany wewnętrzenie przez Google do zarządzania tysiącami zadań uruchomionych na setkach maszyn. Jarek Kuśmiarek prowadzący zespół deweloperów Borga w Warszawie opisuje go tak.
+Kubernetes jest następcą systemu zwanego Borg \cite{borg}, który jest używany wewnętrzenie przez Google do zarządzania tysiącami zadań uruchomionych na setkach maszyn. Jarek Kuśmiarek prowadzący zespół deweloperów Borga w Warszawie opisuje go tak.
 
 \begin{quote}
-\it{Podstawową jednostką w Borg jest centrum danych Google. Zaawansowany użytkownik wie, gdzie uruchomić swój program. Ten mniej zaawansowany pozostawia to systemowi Borg. Na decyzje podejmowane przez niego wpływają m.in. fakt, skąd dane są czytane najczęściej, kto z nich korzysta, a nawet to, w którym z naszych centrów danych planowane są naprawy serwisowe.\footnote{http://itwiz.pl/borg-kubernetes-narzedzia-rozwijane-przez-google-polsce/\cite{}}}
+\it{Podstawową jednostką w Borg jest centrum danych Google. Zaawansowany użytkownik wie, gdzie uruchomić swój program. Ten mniej zaawansowany pozostawia to systemowi Borg. Na decyzje podejmowane przez niego wpływają m.in. fakt, skąd dane są czytane najczęściej, kto z nich korzysta, a nawet to, w którym z naszych centrów danych planowane są naprawy serwisowe \cite{borgArticle}.}
 \end{quote}
 
 Podstawowymi funkcjami Borga są dystrybucja, uruchamianie i monitorowanie zadań oraz restart aplikacji. Dzięki zdjęciu z barków programistów konieczności zarządzania zasobami oraz błędami aplikacji pozwala on na skupienie się na samej aplikacji i jej funkcjonalności. Jako system wysokiej dostępności i niezawodności, może sam zarządzać i monitorować stan aplikacji.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.81\textwidth]{images/placeholder-wide.png}
-	\caption{Architektura systemu Borg}
+	\includegraphics[width=0.9\textwidth]{images/borgArch.jpg}
+	\caption{Architektura systemu Borg \cite{borgArchImg}.}
 \end{figure}
 
-Powyżej została pokazana architektura omawianego systemu. Każda komórka składa się z wielu połączonych ze sobą maszyn oraz posiada kontroler główny {\it Borgmaster} i zespół agentów {\it Borglet}, które są węzłami na których uruchamiane są kontenery aplikacji. Wszystkie te komponenty zostały napisane w języku C++ w celu optymalizacji i jak najlepszej ich integracji z systemem. Borg zarządza pulą maszyn, a także tym, jakie systemy na nich pracują, ile zasobów potrzebują, oraz metodologią najbardziej efektywnego upakowania maszyn. Jak wspominają przedstawiciele Google, jeśli mamy mniej ważne i bardziej ważne zadania na tej samej maszynie, to możemy zarządzać nimi w sposób bardzo dynamiczny, zabierając i oddając ten sam zestaw zasobów z korzyścią dla systemu, który w danej chwili bardziej go potrzebuje. Borg zarządza też cyklem życia maszyn fizycznych. Informuje, gdy trzeba je naprawić. Wówczas znajdujące się na niej procesy automatycznie przenosi na inny serwer. % TODO: Zredagowac ten fragment wyzej
-\\ \\
+Powyżej została pokazana architektura omawianego systemu. Każda komórka składa się z wielu połączonych ze sobą maszyn oraz posiada kontroler główny {\it Borgmaster} i zespół agentów {\it Borglet}, które są węzłami na których uruchamiane są kontenery aplikacji. Wszystkie te komponenty zostały napisane w języku C++ w celu optymalizacji i jak najlepszej ich integracji z systemem. Borg zarządza pulą maszyn, a także tym, jakie systemy na nich pracują, ile zasobów potrzebują, oraz metodologią najbardziej efektywnego upakowania maszyn. Jak wspominają przedstawiciele Google, jeśli mamy mniej ważne i bardziej ważne zadania na tej samej maszynie, to możemy zarządzać nimi w sposób bardzo dynamiczny, zabierając i oddając ten sam zestaw zasobów z korzyścią dla systemu, który w danej chwili bardziej go potrzebuje. Borg zarządza też cyklem życia maszyn fizycznych. Informuje, gdy trzeba je naprawić. Wówczas znajdujące się na niej procesy automatycznie przenoszone są na inny serwer. \\ \\
 Opis poszczególnych komponentów, z których zbudowany jest Borg przedstawiony został poniżej: \\ \\
 {\bf Borgmaster:} Główny komponent każdej komórki systemu Borg. Nasłuchuje on i przetwarza wszystkie żądania klientów i na ich podstawie tworzy nowe zadania lub umożliwia odczytanie danych. Zarządza on również stanem maszyn oraz umożliwia komunikację z Borgletami. Mimo iż ten komponent uruchamiany jest jako pojedyczny proces to jest on replikowany pięć razy w obrębie jednej komórki. Każdy proces posiada podpięty logiczny dysk  bazujący na systemie Paxos19 w celu zachowania stanu systemu. Pozwala on na stworzenie systemu wysokiej dostępności, który zachowuje stan komórki w pamięci. Dodatkowo jeden z procesów jest wybierany jako lider, który jako centralny proces zarządza tworzeniem oraz kończeniem wszelkich zadań. Poprzez zastosowanie odpowiednich mechanizmów, nawet w przypadku błędu procesu lidera, system zachowuje działanie i w ciągu 10 sekund od braku kontaktu z liderem wybierany jest nowy lider. \\ \\
-{\bf Planista:} Zajmuje się on optymalnym rozlokowaniem tworzonych zadań na dostępnych maszynach. Po zapisaniu każdego zadania jest ono dodawane do kolejki. Następnie zadania są asynchronicznie sprawdzane i przypisywane do maszyn na podstawie algorytmu Round-Robin{\footnote{\cite{}}, poprzez wybieranie zadań według priorytetów i zapewnienie sprawiedliwego rozlokowania zadań. Po wybraniu grupy maszyn, na których możliwe będzie wystartowanie danego zadania, są one poddawane procesowi oceniania. Na podstawie dostępnych zasobów, ilości uruchomionych zadań, a nawet zaplanowanych prac konserwacyjnych liczona jest ocena maszyn i wybierana ta z najlepszym wynikiem. \\ \\
+{\bf Planista:} Zajmuje się on optymalnym rozlokowaniem tworzonych zadań na dostępnych maszynach. Po zapisaniu każdego zadania jest ono dodawane do kolejki. Następnie zadania są asynchronicznie sprawdzane i przypisywane do maszyn na podstawie algorytmu Round-Robin{\footnote{Round-Robin - algorytm szeregowania dla procesów w systemie operacyjnym.}, poprzez wybieranie zadań według priorytetów i zapewnienie sprawiedliwego rozlokowania zadań. Po wybraniu grupy maszyn, na których możliwe będzie wystartowanie danego zadania, są one poddawane procesowi oceniania. Na podstawie dostępnych zasobów, ilości uruchomionych zadań, a nawet zaplanowanych prac konserwacyjnych liczona jest ocena maszyn i wybierana ta z najlepszym wynikiem. \\ \\
 {\bf Borglet:} Lokalny agent uruchomiony na każdej maszynie, której zadaniem jest uruchamianie zadań użytkowników. Zarządza i monitoruje wszystkie procesy na nim uruchomione i odpowiada za ich uruchamianie, zatrzymywanie czy restartowanie w razie potrzeby. Używa odpowiednich opcji jądra systemu w celu zarządzania zasobami oraz informowania głównego komponentu Borgmaster o dostępnych zasobach. Odpowiada na regularne zapytania ze strony Borgmastera, który weryfikuje stan węzła. Jeśli maszyna nie odpowie w wyznaczonym czasie, zostaje oflagowana, a wszystkie zadania na niej uruchomione zostają przeniesione na inne maszyny. W razie przywrócenia łączności wszelkie zduplikowane zadania zostają zatrzymane.
 
 \subsubsection{Architektura Kubernetesa}
@@ -358,8 +343,8 @@ W celu konfiguracji Kubernetesa jako zarządcy kontenerów należy na maszynach 
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.81\textwidth]{images/placeholder-wide.png}
-	\caption{Architektura Kubernetesa}
+	\includegraphics[width=1\textwidth]{images/kubernetesArch.png}
+	\caption{Architektura Kubernetesa \cite{kubernetesArchImg}.}
 \end{figure}
 
 Jak widać na obrazku przedstawiającym architekturę systemu, komponenty są grupowane pod względem głównego węzła, na którym uruchomiony jest API serwer, kontroler główny, planista oraz istnieje możliwość uruchomienia procesu agenta w celu zarejestrowania węzła głównego również jako maszyny na której można uruchamiać aplikacje. Na pozostałych maszynach uruchomione zostają kolejno agent maszyny, czyli kubelet oraz proces proxy do zapewnienia odpowiedniej łączności z innymi maszynami. Dzięki takiemu podziałowi jesteśmy w stanie jeszcze lepiej utylizować dostępne zasoby i zarządzać klastrem. \\
@@ -373,7 +358,7 @@ Jak widać na obrazku przedstawiającym architekturę systemu, komponenty są gr
 
 \item{{\it Planista} --- zarządza on wszystkimi zadaniami i aplikacjami w trakcie ich tworzenia poprzez podejmowanie decyzji, na którym węźle klastra powinny zostać uruchomione. Odpowiednie algorytmy oceniania biorą pod uwagę wiele czynników, takich jak: aktualne obciążenie klastra, dostępne zasoby, planowane prace konserwacyjne i wiele więcej. W razie gdy jeden z węzłów przestanie odpowiadać jego zadaniem jest relokacja aplikacji na nowy węzeł w celu zapewnienia dostępności aplikacji.}
 
-\item{{\it Etcd}: jest to niezawodny i szybki magazyn do przechowywania danych w postaci klucz - wartość. Został stworzony przez firmę CoreOS. Jego głównymi zaletami są: proste API, bezpieczeństwo, szybkość oraz niezawodność. Został napisany w języku Go w oparciu o algorytm Raft \footnote{\cite{}}.}
+\item{{\it Etcd}: jest to niezawodny i szybki magazyn do przechowywania danych w postaci klucz - wartość. Został stworzony przez firmę CoreOS. Jego głównymi zaletami są: proste API, bezpieczeństwo, szybkość oraz niezawodność. Został napisany w języku Go w oparciu o algorytm Raft \footnote{Raft - algorytm dystrybucji i synchronizacji stanu systemu w klastrze \cite{raft}.}}
 \end{itemize}
 {\bf Węzeł klastra(node)} --- każdy węzeł klastra wymaga kilku komponentów, które są niezbędne do zapewnienia komunikacji z węzłem głównym i uruchamiania aplikacji. W celu zapewnienia odpowiedniej komunikacji między aplikacjami na różnych węzłach, każdemu z nich przydzielana jest odpowiednia dedykowana podsieć. Poszczególne komponenty zostały opisane poniżej.
 
@@ -387,11 +372,11 @@ Jak widać na obrazku przedstawiającym architekturę systemu, komponenty są gr
 {\bf Dedykowane obiekty Kubernetesa}: Kubernetes tworzy kontenery aplikacji w oparciu o stworzone przez siebie abstrakcyjne obiekty, które mają za zadanie oddzielić zarządzanie aplikacją, tj.: konfigurację sieci w celu udostępnienia aplikacji światu, skalowanie aplikacji czy restartowanie w razie wystąpienia błędów. Poniżej zostały opisane najczęściej używane obiekty. Warto zaznaczyć, że jest ich dużo więcej.
 
 \begin{itemize}
-\item{{\it Pod} --- jest podstawowym obiektem tworzonym przez Kubernetesa, który zarządza kontenerami aplikacji. Umożliwia on użytkownikom grupowanie powiązanych ze sobą kontenerów w jeden obiekt. Zamiast uruchamiać wiele zależnych kontenerów wielu Podach możemy uruchomić wiele aplikacji w obrębie jednego Poda, a Kubernetes będzie nim zarządzać jak jedną aplikacją. Pozwala to na uruchamianie wszystkich zależnych aplikacji w obrębie tego samego węzła klastra, a co za tym idzie współdzielenie zmiennych środowiskowych czy zamontowanych dysków. Dodatkowo kontenery w obrębie jednego Poda posiadają wspólny adres IP. Zazwyczaj Pod zawiera kontener główny, który odpowiada za udostępnianie tzw. frontendu\footnote{\cite{frontend}} użytkownikowi oraz kontener będący backendem\footnote{\cite{backend}} dla aplikacji głównej.}
+\item{{\it Pod} --- jest podstawowym obiektem tworzonym przez Kubernetesa, który zarządza kontenerami aplikacji. Umożliwia on użytkownikom grupowanie powiązanych ze sobą kontenerów w jeden obiekt. Zamiast uruchamiać wiele zależnych kontenerów wielu Podach możemy uruchomić wiele aplikacji w obrębie jednego Poda, a Kubernetes będzie nim zarządzać jak jedną aplikacją. Pozwala to na uruchamianie wszystkich zależnych aplikacji w obrębie tego samego węzła klastra, a co za tym idzie współdzielenie zmiennych środowiskowych czy zamontowanych dysków. Dodatkowo kontenery w obrębie jednego Poda posiadają wspólny adres IP. Zazwyczaj Pod zawiera kontener główny, który odpowiada za udostępnianie tzw. frontendu\footnote{Frontend - odpowiedzialny jest za pobieranie danych od użytkownika i przekazywanie ich do backendu, którym zazwyczaj jest serwer, jak również wyświetlanie użytkownikowi danych otrzymanych z backendu. Jest to tzw. warstwa prezentacji danych.} użytkownikowi oraz kontener będący backendem\footnote{Backend - warstwa dostępu do danych. Zazwyczaj jest to serwer, z którym komunikuje się frontend w celu wyświetlenia lub manipulacji danymi.} dla aplikacji głównej.}
 
 \item{{\it Replication controller} --- jest on przede wszystkim zarządcą grupy powiąza\-nych Podów. Jego rolą jest zapewnienie aby zdefiniowana liczba Podów była zawsze uruchomiona w klastrze. Przykładowo, w razie wykrycia zbyt dużej ilości powiązanych Podów usunie nadmiarowe. W odwrotnej sytuacji, jeśli liczba Podów będzie zbyt niska w stosunku do zdefiniowanej, utworzy on nowe. Można go określić jako nadzorcę, który pozwala na łatwe zarządzanie grupą Podów uruchomionych w obrębie klastra.}
 
-\item{{\it Services} --- serwisy są abstrakcyjnymi obiektami, które definiują politykę dostępu do grupy Podów definiujących tą samą aplikację, a posiadających różne adresy IP. Zazwyczaj w celu rozróżnienia, które Pody podlegają pod dany serwis używane są etykiety\footnote{\cite{label}} definiowane przy tworzeniu Podów czy Replication Controllera. W związku z tym, że Pody mogą być usuwane i odtwarzane, co zazwyczaj wiąże się ze zmiana adresu IP, stworzone zostały właśnie serwisy. Dzięki serwisom użytkownik zyskuje dostęp do swojej aplikacji mimo, że może być ona uruchomiona na wielu różnych węzłach klastra. Możemy wyróżnić kilka rodzajów serwisów, które odpowiadają za udostępnianie aplikacji wewnątrz klastra, w obrębie węzła oraz jako Load Balancer\footnote{\cite{loadbalancer}} w celu udostępnienia aplikacji na świat oraz odpowiedniego kierowania ruchem do naszej aplikacji.}
+\item{{\it Services} --- serwisy są abstrakcyjnymi obiektami, które definiują politykę dostępu do grupy Podów definiujących tą samą aplikację, a posiadających różne adresy IP. Zazwyczaj w celu rozróżnienia, które Pody podlegają pod dany serwis używane są etykiety definiowane przy tworzeniu Podów czy Replication Controllera. W związku z tym, że Pody mogą być usuwane i odtwarzane, co zazwyczaj wiąże się ze zmiana adresu IP, stworzone zostały właśnie serwisy. Dzięki serwisom użytkownik zyskuje dostęp do swojej aplikacji mimo, że może być ona uruchomiona na wielu różnych węzłach klastra. Możemy wyróżnić kilka rodzajów serwisów, które odpowiadają za udostępnianie aplikacji wewnątrz klastra, w obrębie węzła oraz jako Load Balancer\footnote{Load Balancer - technika rozłądowania obciążenia aplikacji poprzez rozproszenie ruchu na wiele procesorów, komputerów czy połączeń sieciowych \cite{cloud}.} w celu udostępnienia aplikacji na świat oraz odpowiedniego kierowania ruchem do naszej aplikacji.}
 \end{itemize}
 
 \subsection{Docker Swarm}
@@ -400,11 +385,11 @@ Docker Swarm umożliwia tworzenie klastra w oparciu o kontenery Dockera, jednak 
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.81\textwidth]{images/placeholder.png}
-	\caption{Architektura Docker Swarm}
+	\includegraphics[width=1.05\textwidth]{images/dockerSwarmArch.jpg}
+	\caption{Architektura Docker Swarm \cite{dockerSwarmArchImg}.}
 \end{figure}
 
-\subsection{Resin.io}
+\subsection{Resin.io} \label{subsect:resin}
 
 Resin jest rozwiązaniem przygotowanym w celu przeniesienia zalet kontenerów na mikrokontrolery. Obecnie jako jedyny, umożliwia zdalne uruchamianie kontenerów i zarządzanie grupą mikrokontrolerów ze wspólnego panelu sterowania. Dużą zaletą jest wsparcie wielu różnych urządzeń, od RaspberryPi, aż po Intel NUC. To wszystko pozwala deweloperom skupić się na dostarczeniu samej aplikacji oraz sprzętu, na którym będziemy mogli uruchomić naszą aplikację. Pozostałe kroki wymagane do uruchomienia aplikacji na urządzeniu są zarządzane przez system Resin.io, a są to między innymi:
 
@@ -416,26 +401,32 @@ Resin jest rozwiązaniem przygotowanym w celu przeniesienia zalet kontenerów na
 \item{Dostarczenie środowiska uruchomieniowego dla aplikacji.}
 \end{itemize}
 
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.81\textwidth]{images/placeholder.png}
-	\caption{Architektura Resina}
-\end{figure}
-
-Jednak pomimo wielu zalet, nie jest on na tyle zaawansowany i bezpieczny w porównaniu do Kubernetesa. Głównym ograniczeniem jest możliwość uruchomienia jedynie jednego kontenera aplikacji na każdym urządzeniu użytkownika. Grupowanie urządzeń oraz definiowanie zaawansowanych reguł sieciowych w celu ograniczenia komunikacji między urządzeniami również nie jest możliwe.
+Jednak pomimo wielu zalet, nie jest on na tyle zaawansowany i bezpieczny w porównaniu do Kubernetesa. Głównym ograniczeniem jest możliwość uruchomienia jedynie jednego kontenera aplikacji na każdym urządzeniu użytkownika. Grupowanie urządzeń oraz definiowanie zaawansowanych reguł sieciowych w celu ograniczenia komunikacji między urządzeniami również nie jest możliwe \cite{resin}.
 
 \section{Mikrokontroler Raspberry Pi}
 Stworzona przez Raspberry Pi Foundation seria mikrokontrolerów Raspberry Pi miała swój początek w Wielkiej Brytanii, gdzie promowane były one jako idealne do nauki podstaw budowy i działania komputerów. Przez lata kolejne modele były ulepszane i obecnie są one używane w zagadnieniach Internetu Rzeczy, robotyce, inteligentnych domach i wielu innych dziedzinach.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.81\textwidth]{images/placeholder.png}
-	\caption{Mikrokontroler Raspberry Pi}
+	\includegraphics[width=0.81\textwidth]{images/rpi3.jpg}
+	\caption{Mikrokontroler Raspberry Pi 3 \cite{rpi3Img}.}
 \end{figure}
 
-\noindent Poniższa tabela prezentuje porównanie najpopularniejszych modeli Raspberry Pi, tj.: A, B, A+, B+, wersji drugiej modelu B oraz wersji trzeciej. W pracy zostały użyte dwa najnowsze obecnie Raspberry Pi 3, w których znaczącej poprawie uległy taktowanie procesora oraz wielkość pamięci RAM. Dzięki temu mogą być one stosowane jako główny węzeł klastra, kontrolujący pozostałe węzły.
+\noindent Poniższa tabela prezentuje porównanie najpopularniejszych modeli Raspberry Pi, tj.:
+\begin{itemize}
+\item{Raspberry Pi B+}
+\item{Raspberry Pi 2 Model B}
+\item{Raspberry Pi Zero}
+\item{Raspberry Pi 3 Model B}
+\end{itemize}
 
-% TODO TABELA
+W pracy zostały użyte dwa najnowsze obecnie Raspberry Pi 3, w których znaczącej poprawie uległy taktowanie procesora oraz wielkość pamięci RAM. Dzięki temu mogą być one stosowane jako główny węzeł klastra, kontrolujący pozostałe węzły.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1.05\textwidth]{images/rpiComparison.png}
+	\caption{Porównanie najpopularniejszych modeli mikrokontrolera Raspberry Pi \cite{rpiComparisonImg}.}
+\end{figure}
 
 \subsection{Protokoły komunikacji}
 Poniżej opisane zostały protokoły komunikacji Raspberry Pi, użyte na potrzeby wykonania tej pracy. Protokół SPI użyty został do podłączenia wyświetlacza LED i wyświetlania aktualnej temperatury raportowanej przez czujniki. Jeden z czujników komunikuje się poprzez protokół 1-Wire, natomiast drugi komunikuje się bezpośrednio poprzez piny GPIO.
@@ -443,20 +434,20 @@ Ze względu na to, że kontrolery Raspberry Pi B+ oraz 3 posiadają identyczny u
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.81\textwidth]{images/placeholder.png}
-	\caption{Układ pinów mikrokontrolera Raspberry Pi 3}
+	\includegraphics[width=1\textwidth]{images/pi3pinout.png}
+	\caption{Układ pinów mikrokontrolera Raspberry Pi 3 \cite{pi3pinoutImg}.}
 \end{figure}
 
 \subsubsection{Serial Peripheral Interface - SPI}
 Synchroniczny interfejs komunikacji używany głównie przy komunikacji na krótkie dystanse, przeważnie w systemach wbudowanych i mikrokontrolerach. Typowo stosowany do bezpiecznych kart cyfrowych oraz wyświetlaczy LED. \\ \\
-Urządzenia komunikujące się przy użyciu interfejsu SPI działają w trybie full duplex, czyli jednoczesnej komunikacji dwukierunkowej. Nadrzędne urządzenie inicjuje komunikację i umożliwia odczyt oraz zapis danych. Dodatkowo możliwa jest komunikacja z wieloma urządzeniami podrzędnymi poprzez wybór odpowiedniej linii sygnałowej.
+Urządzenia komunikujące się przy użyciu interfejsu SPI działają w trybie full duplex, czyli jednoczesnej komunikacji dwukierunkowej. Nadrzędne urządzenie inicjuje komunikację i umożliwia odczyt oraz zapis danych. Dodatkowo możliwa jest komunikacja z wieloma urządzeniami podrzędnymi poprzez wybór odpowiedniej linii sygnałowej \cite{raspberry}.
 
 \subsubsection{1-Wire}
-Prosty protokół komunikacyjny, którego nazwa wywodzi się z faktu użycia pojedynczej linii danych do komunikacji. Mimo niskiej prędkości przesyłu danych charakteryzuje się dużą popularnością. Wspiera tzw. zasilanie pasożytnicze, a mianowicie pozwala na zasilanie czujnika bezpośrednio z linii danych. Odbiornik wyposażony w kondensator jest ładowany z linii danych, a następnie ta energia używana jest do zasilania odbiornika. Używany najczęściej w przypadku prostych czujników, np. do raportowania temperatury i wilgotności otoczenia.
+Prosty protokół komunikacyjny, którego nazwa wywodzi się z faktu użycia pojedynczej linii danych do komunikacji. Mimo niskiej prędkości przesyłu danych charakteryzuje się dużą popularnością. Wspiera tzw. zasilanie pasożytnicze, a mianowicie pozwala na zasilanie czujnika bezpośrednio z linii danych. Odbiornik wyposażony w kondensator jest ładowany z linii danych, a następnie ta energia używana jest do zasilania odbiornika. Używany najczęściej w przypadku prostych czujników, np. do raportowania temperatury i wilgotności otoczenia \cite{raspberry}.
 
 \subsubsection{General Purpose Input/Onput - GPIO}
 Interfejs ten służy do komunikacji między różnymi elementami systemu, takimi jak mikroprocesor czy urządzenia peryferyjne. Fizycznie komunikacja odbywa się przy użyciu pinów wbudowanych w dane urządzenie, które mogą pełnić rolę wejść i wyjść w zależności od konfiguracji. Często grupowane są one w porty , gdzie jeden port stanowi zazwyczaj osiem pinów GPIO. \\ \\
-Komunikacja odbywa się poprzez ustawienie stanu wysokiego lub niskiego na odpowiednim pinie GPIO. Z tego względu pojedynczy pin może służyć jedynie do prostych czynności takich jak wykrywanie zdarzeń, gazów. Natomiast sterowanie grupą pinów jako portem daje dużo większe możliwości.
+Komunikacja odbywa się poprzez ustawienie stanu wysokiego lub niskiego na odpowiednim pinie GPIO. Z tego względu pojedynczy pin może służyć jedynie do prostych czynności takich jak wykrywanie zdarzeń, gazów. Natomiast sterowanie grupą pinów jako portem daje dużo większe możliwości \cite{raspberry}.
 \chapter{Projekt KubePi} \label{project}
 \section{Analiza wymagań}
 W tej części zostanie przedstawiona analiza, konfiguracja oraz implementacja systemu KubePi. W pierwszej części zdefiniowane zostają wymagania aplikacji oraz opisane wymagania funkcjonalne wraz z ograniczeniami projektu. Kolejna część opisuje technologie użyte przy tworzeniu projektu. Następnie przedstawiona zostaje propozycja i architektura systemu wraz z opisem implementacji przykładowych aplikacji. Przybliżone zostają kluczowe elementy konfiguracji systemu wraz z opisem kodu najważniejszych elementów aplikacji.
@@ -477,71 +468,67 @@ Ze względu na swój charakter oraz wymóg komunikacji między aplikacjami znajd
 
 Dodatkowo system powinien umożliwiać bezpieczny sposób komunikacji z klastrem oraz autentykację i autoryzację użytkowników. Ze względu na obecny poziom skomplikowania pracy ten element zostanie pominięty, jednak system będzie umożliwiał odpowiednią konfigurację zabezpieczeń klastra.
 \subsection{Ograniczenia projektu}
-Ze względu na skomplikowany proces konfiguracji systemu i klastra, projekt nie będzie umożliwiał łatwego przeniesienia i uruchomienia w innej podsieci. Wymóg stosowania odpowiedniej topologii i narzędzi do zarządzania siecią w celu umożliwienia odpowiedniej komunikacji między elementami systemu wymaga aby urządzenia miały przydzielany stały adres IP lub minimalnie adres z wcześniej skonfigurowanego zakresu podsieci. Ta opcja jednak wymagałaby dodatkowych kroków i odpowiedniej konfiguracji serwera DNS\footnote{\cite{dns}}, co nie zostało uwzględnione w tym projekcie.
+Ze względu na skomplikowany proces konfiguracji systemu i klastra, projekt nie będzie umożliwiał łatwego przeniesienia i uruchomienia w innej podsieci. Wymóg stosowania odpowiedniej topologii i narzędzi do zarządzania siecią w celu umożliwienia odpowiedniej komunikacji między elementami systemu wymaga aby urządzenia miały przydzielany stały adres IP lub minimalnie adres z wcześniej skonfigurowanego zakresu podsieci. Ta opcja jednak wymagałaby dodatkowych kroków i odpowiedniej konfiguracji serwera DNS, co nie zostało uwzględnione w tym projekcie.
 
 \section{Sprzęt i technologie}
 \subsection{Mikrokontrolery}
-Na potrzeby projektu i budowy klastra zostały użyte dwa mikrokontrolery Raspberry Pi, jeden w wersji drugiej, model B, natomiast drugi w wersji trzeciej. Na obu mikrokontrolerach zainstalowany został darmowy system HypriotOS \footnote{HypriotOS - link}, który natywnie wspiera Dockera i jest dobrze przygotowany do obsługi Kubernetesa. Nowszy model płytki w wersji trzeciej, ze względu na lepsze parametry techniczne został użyty jako główny węzeł klastra, a zarazem jednostka sterująca i zarządzająca klastrem. Druga płytka natomiast została użyta jako dodatkowy węzeł klastra. Ilość węzłów klastra może być bez problemu zwiększona. Kubernetes w najnowszej obecnie wersji, tj. \textit{1.6} może obsłużyć nawet do 5000 węzłów. 
+Na potrzeby projektu i budowy klastra zostały użyte dwa mikrokontrolery Raspberry Pi, jeden w wersji drugiej, model B, natomiast drugi w wersji trzeciej. Na obu mikrokontrolerach zainstalowany został darmowy system HypriotOS \footnote{HypriotOS - darmowy system przeznaczony na mikrokontrolery Raspberry Pi z wbudowaną obsługą kontenerów Dockera \cite{hypriotos}.}, który natywnie wspiera Dockera i jest dobrze przygotowany do obsługi Kubernetesa. Nowszy model płytki w wersji trzeciej, ze względu na lepsze parametry techniczne został użyty jako główny węzeł klastra, a zarazem jednostka sterująca i zarządzająca klastrem. Druga płytka natomiast została użyta jako dodatkowy węzeł klastra. Ilość węzłów klastra może być bez problemu zwiększona. Kubernetes w najnowszej obecnie wersji, tj. \textit{1.6} może obsłużyć nawet do 5000 węzłów. 
 \subsection{Urządzenia peryferyjne}
 \subsubsection{DHT11}
-Popularny czujnik temperatury i wilgotności powietrza z interfejsem cyfrowym, jednoprzewodowym. Zakres pomiarowy: temperatura 0 \textdegree{}C - 50 \textdegree{}C , wilgotność 20 - 90 \%RH \cite{DHT11}. % BOTLAND
+Popularny czujnik temperatury i wilgotności powietrza z interfejsem cyfrowym, jednoprzewodowym. Zakres pomiarowy: temperatura 0 \textdegree{}C - 50 \textdegree{}C , wilgotność 20 - 90 \%RH \cite{dht11Botland}. % BOTLAND
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.81\textwidth]{images/placeholder-wide.png}
-	\caption{Czujnik temperatury i wilgotności DHT11.}
+	\includegraphics[width=0.3\textwidth]{images/dht11.jpg}
+	\caption{Czujnik temperatury i wilgotności DHT11 \cite{dht11Img}.}
 \end{figure}
 \subsubsection{DS18B20}
-Cyfrowy czujnik temperatury DS18B20 z interfejsem 1-wire. Działa w zakresie od -55 \textdegree{}C do 125 \textdegree{}C. Zasilany jest napięciem od 3,0 V do 5,5 V \cite{DS18B20}. % BOTLAND
+Cyfrowy czujnik temperatury DS18B20 z interfejsem 1-wire. Działa w zakresie od -55 \textdegree{}C do 125 \textdegree{}C. Zasilany jest napięciem od 3,0 V do 5,5 V \cite{ds18b20Botland}. % BOTLAND
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.81\textwidth]{images/placeholder-wide.png}
-	\caption{Czujnik temperatury DS18B20.}
+	\includegraphics[width=0.3\textwidth]{images/ds18b20.jpg}
+	\caption{Czujnik temperatury DS18B20 \cite{ds18b20Img}.}
 \end{figure}
 \subsubsection{MAX7219}
-Moduł matrycy złożonej z 128 czerwonych diod LED ułożonych w prostokąt 16 x 8 pikseli. Płytka posiada zamontowane złącza dopasowane do pinów GPIO Raspberry Pi \cite{MAX7219}. % BOTLAND
+Moduł matrycy złożonej z 128 czerwonych diod LED ułożonych w prostokąt 16 x 8 pikseli. Płytka posiada zamontowane złącza dopasowane do pinów GPIO Raspberry Pi \cite{max7219Botland}. % BOTLAND
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.81\textwidth]{images/placeholder-wide.png}
-	\caption{Wyświetlacz LED MAX7219 (16x8).}
+	\includegraphics[width=0.3\textwidth]{images/max7219.jpg}
+	\caption{Matryca LED MAX7219 (16x8) \cite{max7219Img}.}
+\end{figure}
+\subsubsection{MQ3}
+Czujnik alkoholu z wyjściem analogowym. Mierzy zawartość alkoholu np. w wydychanym powietrzu. \cite{mq3Botland}. % BOTLAND
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.3\textwidth]{images/mq3.jpg}
+	\caption{Czujnik alkoholu MQ3 \cite{mq3Img}.}
 \end{figure}
 \subsection{Języki programowania}
 Do stworzenia aplikacji przykładowych wybrany został język Go. Najważniejszym czynnikiem decydującym za tym wyborem była obecność dużej ilości bibliotek ułatwiających komunikację ze sprzętem oraz łatwa kompilacja aplikacji przeznaczonych na różne architektury, w tym architekturę ARM. Dodatkowym czynnikiem decydującym o wyborze języka Go jest domyślna kompilacja aplikacji do statycznego pliku binarnego, który nie wymaga dodatkowych zależności, a co za tym idzie w prosty sposób może zostać uruchomiony w kontenerze Dockera. Ostatnią zaletą jest mała zajętość pamięci i czasu procesora w porównaniu z językami takimi jak Java, co jest bardzo ważne przy uruchamianiu aplikacji w kontenerze na mikrokontrolerach typu Raspberry Pi.\\ \\
 Dodatkowo w celu stworzenia aplikacji webowej użyta została biblioteka ReactJS. Głównym atutem przemawiającym za wyborem tej biblioteki była popularność, duże wsparcie ze strony społeczeństwa oraz niewielki rozmiar i prostota użycia.
 
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.81\textwidth]{images/placeholder-wide.png}
-	\caption{Logo języka Go i biblioteki ReactJS}
-\end{figure}
-
 \subsection{Biblioteki}
 Do stworzenia aplikacji przykładowych użytych zostało kilka otwartoźródłowych bibliotek dostępnych na portalu Github. Poniżej pokrótce została opisana każda z nich:
 \begin{itemize}
-\item{\textit{go-restful} --- Jedna z najpopularniejszych bibliotek dla języka Go używanych do tworzenia tak zwanych RESTful Webservices\footnote{\cite{rest}}.}
-\item{\textit{go-rpio} --- Mała biblioteka pozwalająca w prosty sposób na obsługę pinów GPIO mikrokontrolerów Raspberry Pi. Użyta przy tworzeniu aplikacji do wykrywania alkoholu.}
-\item{\textit{go-dht} --- Biblioteka wspierająca czujniki temperatury i wilgotności DHT11 i DHT22. Pozwala na odczyt pomiarów czujnika na mikrokontrolerach Raspberry Pi.}
-\item{\textit{goDS18B20} --- Podobnie do biblioteki \textit{go-dht} pozwala na odczyt pomiarów czujnika temperatury \textit{DS18B20}.}
-\item{\textit{spidev} --- Biblioteka pozwalająca na obsługę urządzeń wykorzystujących interfejs komunikacyjny SPI. Użyta do obsługi wyświetlacza led \textit{MAX7219}.}
-\item{\textit{ReactJS} --- Biblioteka stworzona przez firmę Facebook napisana w języku JavaScript, pozwalająca w prosty sposób tworzyć interfejs graficzny aplikacji internetowych.}
+\item{\textit{go-restful} --- Jedna z najpopularniejszych bibliotek dla języka Go używanych do tworzenia tak zwanych RESTful Webservices\footnote{RESTful Webservice - rodzaj serwera aplikacji korzystający z architektury REST i udostępniający API zgodne ze standardem REST.} \cite{gorestful}.}
+\item{\textit{go-rpio} --- Mała biblioteka pozwalająca w prosty sposób na obsługę pinów GPIO mikrokontrolerów Raspberry Pi. Użyta przy tworzeniu aplikacji do wykrywania alkoholu \cite{gorpio}.}
+\item{\textit{go-dht} --- Biblioteka wspierająca czujniki temperatury i wilgotności DHT11 i DHT22. Pozwala na odczyt pomiarów czujnika na mikrokontrolerach Raspberry Pi \cite{godht}.}
+\item{\textit{goDS18B20} --- Podobnie do biblioteki \textit{go-dht} pozwala na odczyt pomiarów czujnika temperatury \textit{DS18B20} \cite{gods18b20}.}
+\item{\textit{spidev} --- Biblioteka pozwalająca na obsługę urządzeń wykorzystujących interfejs komunikacyjny SPI. Użyta do obsługi wyświetlacza led \textit{MAX7219} \cite{spidev}.}
+\item{\textit{ReactJS} --- Biblioteka stworzona przez firmę Facebook napisana w języku JavaScript, pozwalająca w prosty sposób tworzyć interfejs graficzny aplikacji internetowych \cite{reactJSDoc}.}
 \end{itemize}
 \subsection{Inne narzędzia}
 \subsubsection{Flannel}
-Jest menadżerem wirtualnej sieci, który umożliwia stworzenie wirtualnej podsieci dla każdego węzła w klastrze. W dużym uproszczeniu pozwala on na komunikację między aplikacjami znajdującymi się w kontenerach uruchomionych na różnych węzłach klastra, przy czym nie jest wymagane aby węzły klastra przebywały w tej samej podsieci. Dzięki takim narzędziom jak Flannel, zwanym \textit{Overlay Networks} możliwa jest komunikacja między aplikacjami uruchomionymi w rozproszonym klastrze.
-\subsubsection{Github}
-Dodatkowym narzędziem użytym w procesie tworzenia aplikacji był system kontroli wersji o nazwie GIT. Pozwalało to kontrolować cały proces powstawania KubePi. Całość jest zintegrowana z portalem Github i przechowywana na prywatnym repozytorium [x]. %TODO.
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.81\textwidth]{images/placeholder.png}
-	\caption{Log kontrolny zmian projektowych z portalu Github.}
-\end{figure}
+Jest menadżerem wirtualnej sieci, który umożliwia stworzenie wirtualnej podsieci dla każdego węzła w klastrze. W dużym uproszczeniu pozwala on na komunikację między aplikacjami znajdującymi się w kontenerach uruchomionych na różnych węzłach klastra, przy czym nie jest wymagane aby węzły klastra przebywały w tej samej podsieci. Dzięki takim narzędziom jak Flannel, zwanym \textit{Overlay Networks} możliwa jest komunikacja między aplikacjami uruchomionymi w rozproszonym klastrze \cite{flannel}.
 \subsubsection{Kubernetes Dashboard}
 Jest to otwartoźródłowy projekt zapoczątkowany przez firmę Google, który ma na celu umożliwienie zarządzania klastrem Kubernetesa z poziomu przeglądarki. Pozwala użytkownikom na zarządzanie aplikacjami uruchomionymi w klastrze, monitorowanie ich stanu, przeglądanie logów oraz uruchamianie nowych aplikacji.
+\subsubsection{Github}
+Dodatkowym narzędziem użytym w procesie tworzenia aplikacji był system kontroli wersji o nazwie GIT. Pozwalało to kontrolować cały proces powstawania KubePi. Całość jest zintegrowana z portalem Github i przechowywana na prywatnym repozytorium \cite{kubepi}.
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.81\textwidth]{images/placeholder.png}
-	\caption{Wygląd aplikacji Kubernetes Dashboard.}
+	\includegraphics[width=1\textwidth]{images/github.png}
+	\caption{Log kontrolny zmian projektowych z portalu Github.}
 \end{figure}
-
+\FloatBarrier
 \clearpage
 
 \section{Projekt}
@@ -613,7 +600,7 @@ W celu wykonania następnych operacji musimy mieć dostęp do systemu zainstalow
 \end{figure}
 \FloatBarrier
 
-Do połączenia z urządzeniem wykorzystam darmowy program putty\footnote{putty - strona domowa} służący właśnie do komunikacji z innymi systemami używając między innymi protokołu SSH. Domyśle dane logowania to \textit{pirate:hypriot}. Poniżej możemy zobaczyć zrzut ekranu z programu putty.
+Do połączenia z urządzeniem wykorzystam darmowy program putty\footnote{Putty - aplikacja pozwalająca na połączenie z innymi systemami m.in. przy pomocy protokołu SSH. Strona domowa projektu: \textit{http://www.putty.org/}} służący właśnie do komunikacji z innymi systemami używając między innymi protokołu SSH. Domyśle dane logowania to \textit{pirate:hypriot}. Poniżej możemy zobaczyć zrzut ekranu z programu putty.
 
 \begin{figure}[h]
 	\centering
@@ -635,7 +622,7 @@ Następnie należy uruchomić ponownie urządzenie. Jeśli w folderze \textit{/s
 sudo mv /boot/overlays/w1-gpio.dtbo	/boot/overlays/w1-gpio.dtb
 \end{lstlisting}
 
-\subsection{Instalacja i konfiguracja Kubernetesa}
+\subsection{Instalacja i konfiguracja Kubernetesa} \label{subsect:kubernetes-install}
 W celu zainstalowania Kubernetesa skorzystamy z narzędzia o nazwie \textit{kubeadm}, które zostało stworzone w celu uproszczenia procesu instalacji i konfiguracji klastra. Zacznijmy od dodania repozytoriów oraz instalacji \textit{kubeadm}. Wszystkie komendy należy wykonywać jako \textit{root}. \\
 
 \begin{lstlisting}
@@ -691,7 +678,7 @@ $ kubectl create -n kube-system -f https://raw.githubusercontent.com/floreks/Kub
 
 Ostatnim krokiem będzie uruchomione Dashboardu w celu ułatwienia zarządzania klastrem oraz oznaczenie węzła odpowiednią etykietą dzięki czemu możliwe będzie uruchamianie aplikacji na wybranych przez nas węzłach. 
 
-\begin{lstlisting}[float,floatplacement=H]
+\begin{lstlisting}[language=bash]
 $ kubectl label nodes kube-master target=master
 node "kube-master" labeled
 $  kubectl create -f https://raw.githubusercontent.com/floreks/KubePi/master/config/dashboard-arm.yaml
@@ -770,6 +757,7 @@ func main() {
 \end{lstlisting}
 
 \noindent Listing~\ref{lst:dht-api} przedstawia rejestrowanie odpowiednich podstron, które pozwolą na wykonanie kodu poprzez przejście na odpowiedni adres w przeglądarce. W tym wypadku rejestrujemy podstronę \textit{"/dht11"}, która zwróci nam odczyt z sensora w formacie \textit{JSON}.
+\clearpage
 \begin{lstlisting}[language=golang,caption=Konfiguracja API,label=lst:dht-api]
 func (d DHT11Service) Handler() *restful.WebService {
 	ws := new(restful.WebService)
@@ -823,6 +811,7 @@ type DHTReader interface {
 \end{lstlisting}
 
 \noindent Ostatni listing~\ref{lst:dht-read} przedstawia wykorzystanie biblioteki \textit{go-dht} i bezpośredni odczyt wartości sensora \textit{DHT11} z domyślnie ustawionego 17 pinu GPIO.
+\clearpage
 \begin{lstlisting}[language=golang,caption=Odczyt danych z sensora DHT11,label=lst:dht-read]
 func (DHT11Reader) ReadFromSensor() (*DHTResponse, error) {
 	log.Printf("Reading from sensor %s on GPIO pin %d", dht.DHT11, gpioPinOverride)
@@ -842,10 +831,11 @@ func (DHT11Reader) ReadFromSensor() (*DHTResponse, error) {
 
 \noindent Aplikacja posiada również opcję nadpisania numeru pinu GPIO, z którego należy odczytać dane. Możliwe jest to dzięki wywołaniu operacji \textit{POST} na podstronie o adresie \textit{"/dht11"} i przesłąnie parametru \textit{gpio=x}, gdzie \textit{x} to numer pinu GPIO z którego chcemy odczytywać dane.
 
-\subsubsection{Breathalyzer}
+\subsubsection{Breathalyzer} \label{subsect:breathalyzer}
 Kolejna aplikacja ma za zadanie wykrywanie alkoholu w powietrzu. Po uruchomieniu mierzy przez 5 sekund zawartość alkoholu, następnie uśrednia wynik i informuje użytkownika czy alkohol został wykryty czy nie. Nie posiada ona funkcji dokładnego pomiaru stężenia alkoholu, a jedynie informuje o jego obecności. \\
 
 \noindent Listing~\ref{lst:breathalyzer-api} podobnie do listingu~\ref{lst:dht-api} przedstawia budowanie API naszej aplikacji. Przejście na postronę \textit{"/mq3/measure"} uruchamia pomiar.
+\clearpage
 \begin{lstlisting}[language=golang,caption=Konfiguracja API,label=lst:breathalyzer-api]
 func (d MQ3Service) Handler() *restful.WebService {
 	ws := new(restful.WebService)
@@ -863,6 +853,7 @@ func (d MQ3Service) Handler() *restful.WebService {
 \end{lstlisting}
 
 \noindent Listing~\ref{lst:breathalyzer-run} pokazuje główną metodę całej aplikacji, której zadaniem jest sprawdzenie obecności alkoholu w powietrzu. Pomiar odbywa się w 5-sekundowym przedziale czasowym z częstotliwością 10 odczytów na sekundę, co pozwala na uzyskanie 50 próbek danych. Dane te są następnie uśredniane, a wykrycie alkoholu sygnalizowane w przypadku jeśli czujnik pozostawał w stanie niskim co najmniej przez połowę okresu próbkowania.
+\clearpage
 \begin{lstlisting}[language=golang,caption=Pomiar alkoholu w powietrzu,label=lst:breathalyzer-run]
 // DetectAlcohol reads for 5 sec digital out from mq-3 sensor and returns true or false based on readings over time
 func (this MQ3Reader) DetectAlcohol() MQ3Response {
@@ -874,7 +865,6 @@ func (this MQ3Reader) DetectAlcohol() MQ3Response {
 	pin := rpi.Pin(this.gpioPin)
 	// Set input mode to read from the pin
 	pin.Input()
-
 	for {
 		select {
 		case <-timeoutChan:
@@ -1035,11 +1025,9 @@ func dht11Handler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(dht11Response)
 }
 \end{lstlisting}
-
-\newpage
 \subsubsection{Budowanie i dystrybucja}
 W tej sekcji opisane zostały proces budowania i dystrybucji aplikacji wraz z użytymi narzędziami. \\ \\
-Język Go pozwala na łatwe budowanie aplikacji do pojedynczego pliku wykonywalnego. Użycie aplikacji \textit{xgo}, pozwoliło uprościć proces budowania aplikacji na różne architektury. Budowanie aplikacji na inne architektury odbywa się w kontenerze Dockera, który został wcześniej skonfigurowany i zawiera wszystkie zależności potrzebne do budowania aplikacji. Domyślnie korzysta on z kompilatora języka Go, jednak używa zaawansowanej konfiguracji w celu zoptymalizowania procesu kompilacji. \\
+Język Go pozwala na łatwe budowanie aplikacji do pojedynczego pliku wykonywalnego. Użycie aplikacji \textit{xgo} \cite{xgo}, pozwoliło uprościć proces budowania aplikacji na różne architektury. Budowanie aplikacji na inne architektury odbywa się w kontenerze Dockera, który został wcześniej skonfigurowany i zawiera wszystkie zależności potrzebne do budowania aplikacji. Domyślnie korzysta on z kompilatora języka Go, jednak używa zaawansowanej konfiguracji w celu zoptymalizowania procesu kompilacji. \\
 
 \noindent Listing~\ref{lst:compiling} przedstawia plik \textit{Makefile} użyty do budowania aplikacji opisanej w sekcji~\ref{subsect:monitoring-server} zgodnej z architekturą ARM. Pozostałe aplikacje korzystają z podobnej konfiguracji.
 \begin{lstlisting}[caption=Makefile użyty do budowania aplikacji dla architektury ARM,label=lst:compiling]
@@ -1149,7 +1137,7 @@ spec:
 \newpage
 \noindent Listing~\ref{lst:yaml-service} definiuje serwis dla naszej aplikacji, który pozwoli udostępnić ją użytkownikom. Kluczowymi elementami tej części są:
 \begin{itemize}
-\item{\textbf{type} --- definiuje typ naszego serwisu. \textit{NodePort} oznacza, że aplikacja udostępniona będzie na automatycznie przydzielonym porcie z zakresu 30000-32767. }
+\item{\textbf{type} --- definiuje typ naszego serwisu. \textit{NodePort} oznacza, że aplikacja udo\-stępniona będzie na automatycznie przydzielonym porcie z zakresu 30000-32767. }
 \item{\textbf{ports} --- definiuje port lub porty, które maja zostać przekierowane z wnętrza kontenera na zewnątrz. Przykładowo jeśli nasz serwer aplikacji uruchamiany jest na porcie 3000 w kontenerze, to dzięki temu będzie on dostępny również na porcie 3000 na przydzielonym dla Poda adresie IP.}
 \end{itemize}
 \begin{lstlisting}[language=yaml,caption=Definicja aplikacji uruchamianej w klastrze - część 3,label=lst:yaml-service]  
@@ -1170,12 +1158,128 @@ spec:
 \end{lstlisting}
 
 \section{Opis użycia}
-\section{Możliwości rozszerzania aplikacji}
+W tej części opisany zostanie proces uruchamiania wszystkich opisanych wcześniej aplikacji. Dodatkowo pokazany zostanie proces monitorowania aplikacji z poziomu Dashboardu. \\
+
+\noindent Pierwszym krokiem jest uruchomienie serwera monitorującego opisanego w sekcji~\ref{subsect:monitoring-server} oraz aplikacji \textit{Breathalyzer} opisanej w sekcji~\ref{subsect:breathalyzer}. Używamy w tym celu komendy \textit{kubectl}, która została wcześniej użyta w sekcji~\ref{subsect:kubernetes-install}.
+\begin{lstlisting}[language=bash]
+$ kubectl create -f https://raw.githubusercontent.com/floreks/KubePi/master/config/dht-server-arm.yaml
+
+$ kubectl create -f https://raw.githubusercontent.com/floreks/KubePi/master/config/breathalyzer-arm.yaml
+\end{lstlisting}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\textwidth]{images/placeholder-wide.png}
+	\caption{Stan aplikacji w klastrze.}
+\end{figure}
+\FloatBarrier
+
+\noindent Obie aplikacje zostaną uruchomione na głównym węźle klastra, do którego zostały podłączone wymagane czujniki. Po poprawnym uruchomieniu aplikacji, co możemy monitorować z poziomu Dashboardu, uruchamiamy pozostałe aplikacje: webową oraz wyświetlacz temperatury. Zostaną one uruchomione na dodatkowym węźle klastra w celu pokazania prawidłowej komunikacji między aplikacjami uruchomionymi na różnych węzłach.
+\begin{lstlisting}[language=bash]
+$ kubectl create -f https://raw.githubusercontent.com/floreks/KubePi/master/config/kubepi-monitor-arm.yaml
+
+$ kubectl create -f https://raw.githubusercontent.com/floreks/KubePi/master/config/led-max7219-client-arm.yaml
+\end{lstlisting}
+
+\noindent Poniżej zostały pokazane zdjęcia obu mikrokontrolerów Raspberry Pi. Pierwsze zdjęcia pokazuje główny węzeł klastra wraz z podłączonymi czujnikami, natomiast drugie pokazuje dodatkowy węzeł z działającą aplikacją wyświetlającą temperaturę pobraną z czujnika podłączonego do głównego węzła.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{images/placeholder-wide.png}
+	\caption{Zdjęcie głównego węzła klastra.}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{images/placeholder-wide.png}
+	\caption{Zdjęcie dodatkowego węzła klastra.}
+\end{figure}
+
+\noindent Ostatnie zdjęcie pokazuje wygląd aplikacji webowej \textit{KubePi Monitor}.
+\begin{figure}
+	\centering
+	\includegraphics[width=0.8\textwidth]{images/placeholder-wide.png}
+	\caption{Zrzut ekranu z aplikacji KubePi Monitor.}
+\end{figure}
+
+\section{Możliwości rozszerzania projektu}
+W tej części skupimy się głównie na możliwości rozwoju stworzonych aplikacji. Możemy rozważyć kilka usprawnień:
+
+\begin{itemize}
+\item{Użycie protokołu MQTT\footnote{MQTT - protokół komunikacji oparty o wzorzec subscribe/publish. Przeznaczony do transmisji danych dla urządzeń niewymagających dużej przepustowości.} zamiast architektury REST i automatyczne wysyłanie danych z czujników do centralnego serwera.}
+\item{Umożliwienie dostępu do danych historycznych zebranych z czujników.}
+\item{Usprawnienie aplikacji webowej poprzez umożliwienie zarządzania czujnikami wieloma jednakowymi czujnikami, np. dodanie etykiet.}
+\end{itemize}
 \chapter{Podsumowanie}
+\section{Dyskusja wyników}
+Celem pracy było stworzenie rozproszonego systemu do monitorowania otoczenia zarządzanego przez system Kubernetes, a opartego o mikrokontrolery Raspberry Pi. Głównym atutem przedstawionej architektury jest modułowa budowa oraz wysoka niezawodność. Każdy nowy węzeł może być w bardzo prosty sposób dołączony do istniejącej infrastruktury, a stworzone aplikacje szybko uruchomione. Sam system odporny jest na przerwy w zasilaniu czy błędy, ponieważ po ponownym uruchomieniu zostaje przywrócony do poprzedniego stanu.
+
+Przedstawione aplikacje pozwalają na stworzenie prostego systemu do monitorowania naszego domu i nie tylko, a dostęp do wszelkich danych umożliwia nam aplikacja webowa. Łatwa konfiguracja, niezawodność i prostota użycia to jedne z wielu zalet przedstawionego rozwiązania. To wszystko pozwala nawet mniej doświadczonym osobom na przeniesienie tej architektury i uruchomienie wszystkiego w swoim domu, a bardziej doświadczonym umożliwia rozszerzenie i dostosowanie do swoich potrzeb.
+
+Poza działającym klastrem Raspberry Pi w pracy zebrane zostało wiele ważnych informacji z zakresu internetu rzeczy, chmur obliczeniowych, wirtualizacji oraz mikrokontrolerów. Pozwala to na łatwiejsze zrozumienie tematyki i przyswojenie wiedzy wymaganej do stworzenia takiego systemu. Dodatkowo pozwala na zapoznanie się z obsługą samych mikrokontrolerów, interfejsów komunikacyjnych, jak również procesu budowania i dystrybucji samych aplikacji.
+
+\section{Perspektywy rozwoju pracy}
+Rozważając dalszy rozwój pracy należy wziąć pod uwagę charakter całej pracy. Skupia się ona bardziej na architekturze systemu oraz zarządzaniu nim, aniżeli na projekcie samych aplikacji. W poprzednim rozdziale przedstawione zostały możliwości rozwoju samych aplikacji, warto jednak spojrzeć na całą pracę z szerszej perspektywy. Zaproponowana architektura i przedstawiona konfiguracja oferuje w zasadzie nieograniczone możliwości. Przykładowymi perspektywami rozwoju mogą być:
+\begin{itemize}
+\item{Rozszerzenie projektu o możliwość wykrywania i informowania użytkownika o niebezpiecznym stężeniu gazów.}
+\item{Uruchomienie i rozlokowanie wielu czujników monitorujących oferujących bardziej kompleksowe monitorowanie większej powierzchni.}
+\item{Stworzenie hybrydowego systemu złożonego ze standardowych komputerów oraz mikrokontrolerów. Pozwoliłoby to na wydajniejszą analizę zebranych danych.}
+\item{Rozszerzenie możliwości systemu o kompleksowe zarządzania domem w oparciu o dane zebrane z czujników, np. automatycznie otwieranie/zamykanie rolet w zależności od natężenia światła.}
+\end{itemize}
+
 
 \addcontentsline{toc}{chapter}{Bibliografia}
 \begin{thebibliography}{99}
-	\bibitem{go} {TODO}
+	\bibitem{iot} {P. Raj A. C. Raman, The Internet of Things: Enabling Technologies, Platforms, and Use Cases, Auerbach Publications, 2017, ISBN: 978-1498761284}
+	\bibitem{virtualization} {M. Portnoy, Virtualization Essentials, Sybex, 2016, ISBN: 978-1119267720}
+	\bibitem{docker} {} 
+	\bibitem{webapp} {}
+	\bibitem{effectiveGo} {https://golang.org/doc/effective\_go.html - [dostęp 04.02.2017]}
+	\bibitem{compileGo} {https://golang.org/cmd/compile/ - [dostęp 12.01.2017]}
+	\bibitem{reactJSDoc} {https://facebook.github.io/react/docs - [dostęp 10.02.2017]}
+	\bibitem{cloud} {T. Erl, R. Puttini, Z. Mahmood, Cloud Computing: Concepts, Technology \& Architecture, Prentice Hall, 2013, ISBN: 978-0133387520}
+	\bibitem{kubernetes} {}	
+	\bibitem{raspberry} {T. Short, Raspberry Pi 3: Beginner to Pro – Step by Step Guide, CreateSpace Independent Publishing Platform, 2016, ISBN: 978-1539342984}
+	\bibitem{ds18b20Doc} {}
+	\bibitem{max7219Doc} {}
+	\bibitem{dht11Doc} {}
+	\bibitem{mq3Doc} {}
+	\bibitem{cloudComputing} {}
+	\bibitem{linux} {C. Negus, Linux Bible, Wiley, 2015, ISBN: 978-1118999875}
+	\bibitem{daemon} {}
+	\bibitem{dockerhub} {}
+	\bibitem{borg} {A. Verma, L. Pedrosa, M. Korupolu, D. Oppenheimer, E. Tune, J. Wilkes, Large-scale cluster management at Google with Borg, Google Inc., 2015, https://pdos.csail.mit.edu/6.824/papers/borg.pdf - [dostęp 08.02.2017]}
+	\bibitem{borgArticle} {http://itwiz.pl/borg-kubernetes-narzedzia-rozwijane-przez-google-polsce - [dostęp 04.02.2017]}
+	\bibitem{raft} {https://raft.github.io - [dostęp 20.02.2017]}
+	\bibitem{resin} {}
+	\bibitem{hypriotos} {https://blog.hypriot.com - [dostęp 01.03.2017]}
+	\bibitem{dht11Botland} {}
+	\bibitem{ds18b20Botland} {}
+	\bibitem{max7219Botland} {}
+	\bibitem{mq3Botland} {}
+	\bibitem{gorestful} {}
+	\bibitem{gorpio} {}
+	\bibitem{godht} {}
+	\bibitem{gods18b20} {}
+	\bibitem{spidev} {}	
+	\bibitem{flannel} {}
+	\bibitem{kubepi} {https://github.com/floreks/KubePi - [dostęp 05.05.2017]}			\bibitem{xgo} {}	
+	% obrazki
+	\bibitem{rpiComparisonImg} {https://hackadaycom.files.wordpress.com/2016/02/pispecs2.png - [dostęp xxx]}
+	\bibitem{iotImg} {https://upload.wikimedia.org/wikipedia/commons/a/ab/Internet\_of\_Things.jpg - [dostęp xxx]}
+	\bibitem{cloudArchImg} {http://img.bhs4.com/89/3/893E6C660161EB50A28D2306A933F2A07F98F600\_lis.jpg - [dostęp xxx]}
+	\bibitem{hypervisorArchImg} {http://www.ni.com/cms/images/devzone/tut/HostedVsBareMetal2\_20090802212753.png - [dostęp xxx]}
+	\bibitem{virtContainerArchImg} {http://www.viux.com/Portals/0/images/hosting/cloud\_servers/Containers\_new\_V2.jpg - [dostęp xxx]}
+	\bibitem{dockerArchImg} {https://www.sayonetech.com/media/2015/10/30/docker\_host\_image.jpg - [dostęp xxx]}
+	\bibitem{borgArchImg} {https://image.slidesharecdn.com/whatdoesittaketomakegoogleworkatscale-150825083956-lva1-app6892/95/what-does-it-take-to-make-google-work-at-scale-35-638.jpg - [dostęp xxx]}
+	\bibitem{kubernetesArchImg} {https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Kubernetes.png/600px-Kubernetes.png - [dostęp xxx]}
+	\bibitem{dockerSwarmArchImg} {https://image.slidesharecdn.com/dockerswarmv1-150401123157-conversion-gate01/95/docker-swarm-introduction-13-638.jpg - [dostęp xxx]}
+	\bibitem{rpi3Img} {https://www.raspberrypi.org/app/uploads/2016/02/Raspberry-Pi-3-top-down-web.jpg - [dostęp xxx]}
+	\bibitem{pi3pinoutImg} {https://www.element14.com/community/servlet/JiveServlet/previewBody/73950-102-10-339300/pi3\_gpio.png - [dostęp xxx]}
+	\bibitem{dht11Img} {https://botland.com.pl/9274-large\_default/czujnik-temperatury-i-wilgotnosci-dht11.jpg - [dostęp xxx]}
+	\bibitem{ds18b20Img} {https://botland.com.pl/7798-large\_default/czujnik-temperatury-ds18b20-cyfrowy-1-wire-tht.jpg - [dostęp xxx]}
+	\bibitem{max7219Img} {https://botland.com.pl/16640-large\_default/matryca-128-led-16x8-max7219-do-raspberry-pi.jpg - [dostęp xxx]}
+	\bibitem{mq3Img} {https://botland.com.pl/8941-large\_default/czujnik-alkoholu-mq-3.jpg - [dostęp xxx]}
 \end{thebibliography}
 
 \addcontentsline{toc}{chapter}{Spis rysunków}
