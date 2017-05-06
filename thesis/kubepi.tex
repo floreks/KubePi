@@ -1,5 +1,6 @@
 \documentclass[12pt]{report}
 \usepackage[T1]{fontenc}
+%\usepackage{polski}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \usepackage{wrapfig}
@@ -225,7 +226,7 @@ Według książki \textit{Virtualization Essentials} \cite{virtualization} nadzo
 \item Transparentność --- pozwala uruchamiać oprogramowanie na maszynie wirtualnej bez żadnych modyfikacji i niezależnie od sprzętu oraz umożliwia dzielenie zasobów sprzętowych przez wiele maszyn wirtualnych.
 \item Izolacja --- umożliwia nadzorcy tworzenie i uruchamianie niezależnych, odizolowanych od siebie środowisk wirtualnych w obrębie jednego fizycznego systemu. Główną zaletą jest zapobieganie oddziaływania błędów aplikacji na inne aplikacje uruchomione w innych środowiskach wirtualnych.
 \item Enkapsulacja --- zapewnia elastyczność i bezpieczeństwo aplikacji uruchomionych w środowisku wirtualnym poprzez zamknięcie systemu w obrębie wirtualnego dysku twardego. Dzięki temu instalacja i tworzenie kopii zapasowych maszyn wirtualnych sprowadza się do kopiowania plików.
-\item Łatwość zarządzania --- wbudowane opcje nadzorcy do zamykania, restartowania, uruchamiania, usypiania, dodawania oraz usuwania wirtualnych maszyn umożliwiają łatwe zarządzanie wieloma maszynami wirtualnymi.
+\item Prostota zarządzania --- wbudowane opcje nadzorcy do zamykania, restartowania, uruchamiania, usypiania, dodawania oraz usuwania wirtualnych maszyn umożliwiają łatwe zarządzanie wieloma maszynami wirtualnymi.
 \end{enumerate}
 
 \subsection{Wirtualizacja oparta o kontenery}
@@ -1233,7 +1234,7 @@ W tej części skupimy się głównie na możliwości rozwoju stworzonych aplika
 \section{Dyskusja wyników}
 Celem pracy było stworzenie rozproszonego systemu do monitorowania otoczenia zarządzanego przez system Kubernetes, a opartego o mikrokontrolery Raspberry Pi. Głównym atutem przedstawionej architektury jest modułowa budowa oraz wysoka niezawodność. Każdy nowy węzeł może być w bardzo prosty sposób dołączony do istniejącej infrastruktury, a stworzone aplikacje szybko uruchomione. Sam system odporny jest na przerwy w zasilaniu czy błędy, ponieważ po ponownym uruchomieniu zostaje przywrócony do poprzedniego stanu.
 
-Przedstawione aplikacje pozwalają na stworzenie prostego systemu do monitorowania naszego domu i nie tylko, a dostęp do wszelkich danych umożliwia nam aplikacja webowa. Łatwa konfiguracja, niezawodność i prostota użycia to jedne z wielu zalet przedstawionego rozwiązania. To wszystko pozwala nawet mniej doświadczonym osobom na przeniesienie tej architektury i uruchomienie wszystkiego w swoim domu, a bardziej doświadczonym umożliwia rozszerzenie i dostosowanie do swoich potrzeb.
+Przedstawione aplikacje pozwalają na stworzenie prostego systemu do monitorowania naszego domu i nie tylko, a dostęp do wszelkich danych umożliwia nam aplikacja webowa. Prosta konfiguracja, niezawodność i prostota użycia to jedne z wielu zalet przedstawionego rozwiązania. To wszystko pozwala nawet mniej doświadczonym osobom na przeniesienie tej architektury i uruchomienie wszystkiego w swoim domu, a bardziej doświadczonym umożliwia rozszerzenie i dostosowanie do swoich potrzeb.
 
 Poza działającym klastrem Raspberry Pi w pracy zebrane zostało wiele ważnych informacji z zakresu internetu rzeczy, chmur obliczeniowych, wirtualizacji oraz mikrokontrolerów. Pozwala to na łatwiejsze zrozumienie tematyki i przyswojenie wiedzy wymaganej do stworzenia takiego systemu. Dodatkowo pozwala na zapoznanie się z obsługą samych mikrokontrolerów, interfejsów komunikacyjnych, jak również procesu budowania i dystrybucji samych aplikacji.
 
