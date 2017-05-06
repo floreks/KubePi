@@ -610,10 +610,16 @@ Do połączenia z urządzeniem wykorzystam darmowy program putty\footnote{Putty 
 \FloatBarrier
 
 \subsubsection{Konfiguracja systemu}
-Najpierw należy uruchomić interfejs \textit{1-wire}. W tym celu należy wyedytować plik \textit{/boot/config.txt} i dodać do niego:
+Najpierw należy uruchomić interfejs \textit{1-wire}. W tym celu należy edytować plik \textit{/boot/config.txt} i dodać do niego:
 
 \begin{lstlisting}
 dtoverlay=w1-gpio
+\end{lstlisting}
+
+Dodatkowo na urządzeniu wykorzystującym matrycę LED Max 7219 należy włączyć interfejs \textit{spi}. Podobnie jak wyżej należy dodać do pliku \textit{/boot/config.txt} następujący wpis:
+
+\begin{lstlisting}
+dtparam=spi=on
 \end{lstlisting}
 
 Następnie należy uruchomić ponownie urządzenie. Jeśli w folderze \textit{/sys/bus} nie pojawi się folder \textit{w1} oznacza to, że najprawdopodobniej w tej wersji systemu również występuje błąd z ładowaniem sterownika interfejsu \textit{1-wire}. Aby go naprawić należy wykonać następującą komendę i ponownie uruchomić system.
@@ -644,7 +650,7 @@ $ kubeadm init --pod-network-cidr 10.244.0.0/16
 Ze względu na pobieranie dość dużej ilości proces ten może potrwać kilkanaście minut. Po zakończeniu uruchamiania należy zapisać sobie polecenie służące do dołączania dodatkowych węzłów do klastra. Poniżej możemy zobaczyć przykładowe polecenie. Token zostaje automatycznie wygenerowany i wygasa po określonym czasie.
 
 \begin{lstlisting}
-$ kubeadm join --token 312a65.2cc5af081672daa6 192.168.0.100:6443
+$ kubeadm join --token aed353.f7eb248b374a6ef8 192.168.0.100:6443
 \end{lstlisting}
 
 Następnie ustawiamy narzędzie \textit{kubectl}, aby komunikowało się z naszym klastrem.
@@ -709,7 +715,7 @@ Od teraz możemy zarządzać naszym klastrem z poziomu przeglądarki, w naszym p
 \end{figure}
 \FloatBarrier
 
-Po poprawnym skonfigurowaniu głównego węzła, należy skonfigurować dodatkowy węzeł. W naszym przypadku rolę tą pełnić będzie urządzenie Raspberry Pi 2. Ponownie wypalamy obraz systemu HypriotOS, uruchamiamy i podłączamy się używając protokołu SSH. Należy pamiętać o ustawieniu innej nazwy hosta w pliku \textit{device-init.yaml}. Na potrzeby pracy drugi węzeł nazwany został \textit{kube-node}. Na tej maszynie również należy zainstalować narzędzie \textit{kubeadm} w celu podłączenia węzła do klastra. Kiedy wszystko jest gotowe wykonujemy polecenie:
+Po poprawnym skonfigurowaniu głównego węzła, należy skonfigurować dodatkowy węzeł. W naszym przypadku rolę tą pełnić będzie drugi mikrokontroler Raspberry Pi 3. Ponownie wypalamy obraz systemu HypriotOS, uruchamiamy i podłączamy się używając protokołu SSH. Należy pamiętać o ustawieniu innej nazwy hosta w pliku \textit{device-init.yaml}. Na potrzeby pracy drugi węzeł nazwany został \textit{kube-node}. Na tej maszynie również należy zainstalować narzędzie \textit{kubeadm} w celu podłączenia węzła do klastra. Kiedy wszystko jest gotowe wykonujemy polecenie:
 
 \begin{lstlisting}
 $ kubeadm join --token 645058.48480ab896795f04 192.168.0.100:6443
@@ -757,7 +763,6 @@ func main() {
 \end{lstlisting}
 
 \noindent Listing~\ref{lst:dht-api} przedstawia rejestrowanie odpowiednich podstron, które pozwolą na wykonanie kodu poprzez przejście na odpowiedni adres w przeglądarce. W tym wypadku rejestrujemy podstronę \textit{"/dht11"}, która zwróci nam odczyt z sensora w formacie \textit{JSON}.
-\clearpage
 \begin{lstlisting}[language=golang,caption=Konfiguracja API,label=lst:dht-api]
 func (d DHT11Service) Handler() *restful.WebService {
 	ws := new(restful.WebService)
@@ -1167,12 +1172,24 @@ $ kubectl create -f https://raw.githubusercontent.com/floreks/KubePi/master/conf
 $ kubectl create -f https://raw.githubusercontent.com/floreks/KubePi/master/config/breathalyzer-arm.yaml
 \end{lstlisting}
 
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=1\textwidth]{images/placeholder-wide.png}
-	\caption{Stan aplikacji w klastrze.}
-\end{figure}
-\FloatBarrier
+\noindent Stan klastra po uruchomieniu wszystkich aplikacji powinien wyglądać następująco:
+\begin{lstlisting}[language=bash]
+$ kubectl get pod --all-namespaces
+NAMESPACE     NAME                                  READY     STATUS
+default       breathalyzer-4151816716-kwg9l         1/1       Running
+default       dht-server-2873612848-zttlc           1/1       Running
+kube-system   etcd-kube-master                      1/1       Running
+kube-system   kube-apiserver-kube-master            1/1       Running
+kube-system   kube-controller-manager-kube-master   1/1       Running
+kube-system   kube-dns-279829092-4c3cr              3/3       Running
+kube-system   kube-flannel-ds-695t3                 2/2       Running
+kube-system   kube-flannel-ds-b3ff4                 2/2       Running
+kube-system   kube-proxy-444ch                      1/1       Running
+kube-system   kube-proxy-cbp1l                      1/1       Running
+kube-system   kube-scheduler-kube-master            1/1       Running
+node-1        kubepi-monitor-1313348425-fxpth       1/1       Running
+node-1        led-max7219-client-4003274723-980tp   1/1       Running
+\end{lstlisting}
 
 \noindent Obie aplikacje zostaną uruchomione na głównym węźle klastra, do którego zostały podłączone wymagane czujniki. Po poprawnym uruchomieniu aplikacji, co możemy monitorować z poziomu Dashboardu, uruchamiamy pozostałe aplikacje: webową oraz wyświetlacz temperatury. Zostaną one uruchomione na dodatkowym węźle klastra w celu pokazania prawidłowej komunikacji między aplikacjami uruchomionymi na różnych węzłach.
 \begin{lstlisting}[language=bash]
@@ -1181,24 +1198,24 @@ $ kubectl create -f https://raw.githubusercontent.com/floreks/KubePi/master/conf
 $ kubectl create -f https://raw.githubusercontent.com/floreks/KubePi/master/config/led-max7219-client-arm.yaml
 \end{lstlisting}
 
-\noindent Poniżej zostały pokazane zdjęcia obu mikrokontrolerów Raspberry Pi. Pierwsze zdjęcia pokazuje główny węzeł klastra wraz z podłączonymi czujnikami, natomiast drugie pokazuje dodatkowy węzeł z działającą aplikacją wyświetlającą temperaturę pobraną z czujnika podłączonego do głównego węzła.
+\noindent Poniżej zostały pokazane zdjęcia obu mikrokontrolerów Raspberry Pi. Pierwsze zdjęcie pokazuje główny węzeł klastra wraz z podłączonymi czujnikami, natomiast drugie pokazuje dodatkowy węzeł z działającą aplikacją wyświetlającą temperaturę pobraną z czujnika podłączonego do głównego węzła.
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.8\textwidth]{images/placeholder-wide.png}
+	\includegraphics[angle=180,width=0.8\textwidth]{images/master.jpg}
 	\caption{Zdjęcie głównego węzła klastra.}
 \end{figure}
-\FloatBarrier
 
+\clearpage
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.8\textwidth]{images/placeholder-wide.png}
+	\includegraphics[angle=90,width=0.7\textwidth]{images/node.jpg}
 	\caption{Zdjęcie dodatkowego węzła klastra.}
 \end{figure}
 
-\noindent Ostatnie zdjęcie pokazuje wygląd aplikacji webowej \textit{KubePi Monitor}.
-\begin{figure}
+\noindent Poniższy zrzut ekranu pokazuje natomiast wygląd aplikacji webowej \textit{KubePi Monitor}.
+\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.8\textwidth]{images/placeholder-wide.png}
+	\includegraphics[width=1\textwidth]{images/kubepi-monitor.png}
 	\caption{Zrzut ekranu z aplikacji KubePi Monitor.}
 \end{figure}
 
