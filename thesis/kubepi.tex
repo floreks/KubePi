@@ -412,6 +412,7 @@ Stworzona przez Raspberry Pi Foundation seria mikrokontrolerów Raspberry Pi mia
 	\caption{Mikrokontroler Raspberry Pi 3 \cite{rpi3Img}.}
 \end{figure}
 
+\clearpage
 \noindent Poniższa tabela prezentuje porównanie najpopularniejszych modeli Raspberry Pi, tj.:
 \begin{itemize}
 \item{Raspberry Pi B+}
@@ -420,7 +421,7 @@ Stworzona przez Raspberry Pi Foundation seria mikrokontrolerów Raspberry Pi mia
 \item{Raspberry Pi 3 Model B}
 \end{itemize}
 
-W pracy zostały użyte dwa najnowsze obecnie Raspberry Pi 3, w których znaczącej poprawie uległy taktowanie procesora oraz wielkość pamięci RAM. Dzięki temu mogą być one stosowane jako główny węzeł klastra, kontrolujący pozostałe węzły.
+\noindent W pracy zostały użyte dwa najnowsze obecnie Raspberry Pi 3, w których znaczącej poprawie uległy taktowanie procesora oraz wielkość pamięci RAM. Dzięki temu mogą być one stosowane jako główny węzeł klastra, kontrolujący pozostałe węzły.
 
 \begin{figure}[h]
 	\centering
@@ -429,13 +430,13 @@ W pracy zostały użyte dwa najnowsze obecnie Raspberry Pi 3, w których znaczą
 \end{figure}
 
 \subsection{Protokoły komunikacji}
-Poniżej opisane zostały protokoły komunikacji Raspberry Pi, użyte na potrzeby wykonania tej pracy. Protokół SPI użyty został do podłączenia wyświetlacza LED i wyświetlania aktualnej temperatury raportowanej przez czujniki. Jeden z czujników komunikuje się poprzez protokół 1-Wire, natomiast drugi komunikuje się bezpośrednio poprzez piny GPIO.
-Ze względu na to, że kontrolery Raspberry Pi B+ oraz 3 posiadają identyczny układ pinów, poniżej pokazany został jedynie układ pinów Raspberry Pi 3.
+Poniżej opisane zostały protokoły komunikacji Raspberry Pi, użyte na potrzeby wykonania tej pracy. Protokół SPI użyty został do podłączenia wyświetlacza LED i wyświetlania aktualnej temperatury raportowanej przez czujniki. Jeden z czujników komunikuje się poprzez protokół 1-Wire, natomiast drugi komunikuje się bezpośrednio poprzez piny GPIO. Na rysunku~\ref{fig:pinout} pokazany został układ pinów Raspberry Pi 3.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=1\textwidth]{images/pi3pinout.png}
 	\caption{Układ pinów mikrokontrolera Raspberry Pi 3 \cite{pi3pinoutImg}.}
+	\label{fig:pinout}
 \end{figure}
 
 \subsubsection{Serial Peripheral Interface - SPI}
@@ -472,7 +473,7 @@ Ze względu na skomplikowany proces konfiguracji systemu i klastra, projekt nie 
 
 \section{Sprzęt i technologie}
 \subsection{Mikrokontrolery}
-Na potrzeby projektu i budowy klastra zostały użyte dwa mikrokontrolery Raspberry Pi, jeden w wersji drugiej, model B, natomiast drugi w wersji trzeciej. Na obu mikrokontrolerach zainstalowany został darmowy system HypriotOS \footnote{HypriotOS - darmowy system przeznaczony na mikrokontrolery Raspberry Pi z wbudowaną obsługą kontenerów Dockera \cite{hypriotos}.}, który natywnie wspiera Dockera i jest dobrze przygotowany do obsługi Kubernetesa. Nowszy model płytki w wersji trzeciej, ze względu na lepsze parametry techniczne został użyty jako główny węzeł klastra, a zarazem jednostka sterująca i zarządzająca klastrem. Druga płytka natomiast została użyta jako dodatkowy węzeł klastra. Ilość węzłów klastra może być bez problemu zwiększona. Kubernetes w najnowszej obecnie wersji, tj. \textit{1.6} może obsłużyć nawet do 5000 węzłów. 
+Na potrzeby projektu i budowy klastra zostały użyte dwa mikrokontrolery Raspberry Pi 3. Na obu mikrokontrolerach zainstalowany został darmowy system HypriotOS \footnote{HypriotOS - darmowy system przeznaczony na mikrokontrolery Raspberry Pi z wbudowaną obsługą kontenerów Dockera \cite{hypriotos}.}, który natywnie wspiera Dockera i jest dobrze przygotowany do obsługi Kubernetesa. Jeden z mikrokontrolerów został użyty jako główny węzeł klastra, a zarazem jednostka sterująca i zarządzająca klastrem. Druga płytka natomiast została użyta jako dodatkowy węzeł klastra. Ilość węzłów klastra może być bez problemu zwiększona. Kubernetes w najnowszej obecnie wersji, tj. \textit{1.6} może obsłużyć nawet do 5000 węzłów. 
 \subsection{Urządzenia peryferyjne}
 \subsubsection{DHT11}
 Popularny czujnik temperatury i wilgotności powietrza z interfejsem cyfrowym, jednoprzewodowym. Zakres pomiarowy: temperatura 0 \textdegree{}C - 50 \textdegree{}C , wilgotność 20 - 90 \%RH \cite{dht11Botland}. % BOTLAND
@@ -562,12 +563,12 @@ Poniższy schemat obrazuje szczegółowo w jaki sposób konkretne sensory zosta�
 \end{figure}
 \FloatBarrier	
 
-Ostatnie zdjęcie pokazuje podłączenie matrycy LED mającej za zadanie wyświetlać aktualną temperaturę do mikrokontrolera Raspberry Pi 2. Ze względu na duża ilość kabli zrobione zostało jedynie zdjęcie poglądowe. Użyty moduł można również wpiąć bezpośrednio w płytkę Raspberry Pi bez użycia dodatkowych kabli. 
+Ostatnie zdjęcie pokazuje podłączenie matrycy LED mającej za zadanie wyświetlać aktualną temperaturę. Ze względu na duża ilość kabli zrobione zostało jedynie zdjęcie poglądowe. Użyty moduł można również wpiąć bezpośrednio w płytkę Raspberry Pi bez użycia dodatkowych kabli, co zostało pokazane w końcowym etapie pracy po uruchomieniu całego systemu i wszystkich aplikacji na rysunku~\ref{fig:led}. 
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[height=1\textwidth]{images/rpi-node.jpg}
-	\caption{Zdjęcie podłączenia matrycy LED 16x8 MAX7219 do płytki Raspberry Pi 2.}
+	\caption{Zdjęcie podłączenia matrycy LED 16x8 MAX7219 do płytki Raspberry Pi 3.}
 \end{figure}
 \FloatBarrier	
 \subsection{Przygotowanie i konfiguracja Raspberry Pi}
@@ -1210,6 +1211,7 @@ $ kubectl create -f https://raw.githubusercontent.com/floreks/KubePi/master/conf
 	\centering
 	\includegraphics[angle=90,width=0.7\textwidth]{images/node.jpg}
 	\caption{Zdjęcie dodatkowego węzła klastra.}
+	\label{fig:led}
 \end{figure}
 
 \noindent Poniższy zrzut ekranu pokazuje natomiast wygląd aplikacji webowej \textit{KubePi Monitor}.
